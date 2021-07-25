@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useRouter } from "next/dist/client/router"
 import { Snackbar } from "@material-ui/core"
 import { Alert } from '@material-ui/lab'
@@ -10,25 +10,18 @@ type UserData = {
   password: string
 }
 
+const usersData: UserData[] = []
 let signUpError: boolean = false
 
 export default function SignUpForm() {
   const [ email, setEmail  ] = useState('')
   const [ user, setUser ] = useState('')
   const [ password, setPassword  ] = useState('')
-  const [ usersData, setUsersData ] = useState([])
-  const [ msgErro, setMsgErro ] = useState('Ocorreu um erro')
+  const [ msgErro, setMsgErro ] = useState('')
   const [ alertMsg, setAlertMsg ] = useState(false);
   const router = useRouter()
   const vertical = 'top'
   const horizontal = 'center'
-
-  useEffect(() => {
-    let usersDataString = localStorage.getItem('usersData')
-    if (usersDataString !== null) {
-      setUsersData(JSON.parse(usersDataString))
-    }
-  }, [])
 
   function createUser(email: string, usuario: string, senha: string): UserData {
     return { email: email, user: usuario, password: senha }
@@ -48,7 +41,7 @@ export default function SignUpForm() {
   function handleSignUp(e: any) {
     e.preventDefault()
     setError(false)
-    setMsgErro('Ocorreu um erro')
+    setMsgErro('')
     usersData.map((users) => {
       if (email == users.email) {
         setMsgErro('Email já cadastrado')
@@ -63,9 +56,6 @@ export default function SignUpForm() {
       usersData.push(createUser(email, user, password))
       localStorage.setItem('usersData', JSON.stringify(usersData))
       setAlertMsg(true)
-      setEmail('')
-      setUser('')
-      setPassword('')
       setTimeout(() => { 
         router.push('/')
       }, 2500)

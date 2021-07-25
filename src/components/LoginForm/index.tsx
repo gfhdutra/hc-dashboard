@@ -8,7 +8,7 @@ export default function LoginForm() {
   const [ password, setPassword  ] = useState('')
   const [ loginError, setLoginError ] = useState(false)
   const [ usersData, setUsersData ] = useState([])
-  const [ errorMsg, setErrorMsg ] = useState('')
+  const [ errorMsg, setErrorMsg ] = useState('Ocorreu um erro')
   const router = useRouter()
 
   useEffect(() => {

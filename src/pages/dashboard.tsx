@@ -1,6 +1,6 @@
+import { useEffect, useState } from 'react';
 import Head from 'next/head'
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import styles from '../styles/Dashboard.module.css'
 
 
@@ -24,13 +24,25 @@ export default function Dashboard() {
       <main className={styles.main}>
 
         <h1 className={styles.title}>
-          Bem-vindo {userName}
+          Olá, {userName}
         </h1>
-        <br />
-        <Link href="/">
-          <a>home</a>
-        </Link>
 
+        <p className={styles.description}>
+          Gestão de cadastros
+        </p>
+
+        <div className={styles.redirect}>
+          <Link href="/" passHref>
+            <button className={styles.btnRedirect}>Cadastrar Cliente</button>
+          </Link>
+          <Link href="/" passHref>
+            <button className={styles.btnRedirect}>Cadastrar Produto</button>
+          </Link>
+        </div>
+
+        <Link href="/">
+          <a>Logout</a>
+        </Link>
       </main>
     </div>
   )

@@ -7,18 +7,18 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Dashboard - Home</title>
+        <title>HC-Dashboard - Home</title>
         <meta name="description" content="Dashboard Home" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
 
         <h1 className={styles.title}>
-          Dashboard
+          HC Dashboard
         </h1>
 
         <p className={styles.description}>
-          Gestão de cadastros
+          Faça seu login
         </p>
 
         <LoginForm />
