@@ -1,5 +1,7 @@
 import { useState } from "react"
 import { useRouter } from "next/dist/client/router"
+import { Snackbar } from "@material-ui/core"
+import { Alert } from '@material-ui/lab'
 import styles from "./styles.module.css"
 
 type UserData = {
@@ -16,14 +18,24 @@ export default function SignUpForm() {
   const [ user, setUser ] = useState('')
   const [ password, setPassword  ] = useState('')
   const [ msgErro, setMsgErro ] = useState('')
+  const [ alertMsg, setAlertMsg ] = useState(false);
   const router = useRouter()
-  
+  const vertical = 'top'
+  const horizontal = 'center'
+
   function createUser(email: string, usuario: string, senha: string): UserData {
     return { email: email, user: usuario, password: senha }
   }
 
   function setError(bool: boolean) {
     return signUpError = bool
+  }
+
+  function handleClose(event: any, reason: any) {
+    if (reason === 'clickaway') {
+      return
+    }
+    setAlertMsg(false)
   }
 
   function handleSignUp(e: any) {
@@ -43,11 +55,13 @@ export default function SignUpForm() {
     if (!signUpError) {
       usersData.push(createUser(email, user, password))
       localStorage.setItem('usersData', JSON.stringify(usersData))
-      router.push('/')
+      setAlertMsg(true)
+      setTimeout(() => { 
+        router.push('/')
+      }, 2500)
     }
   }
   
-
   return (
     <>
       <form className={styles.signUpForm} onSubmit={handleSignUp}>
@@ -89,6 +103,16 @@ export default function SignUpForm() {
 
         <button className={styles.button}>Cadastrar</button>
       </form>
+
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={alertMsg}
+        onClose={handleClose}
+        autoHideDuration={2000}>
+        <Alert severity="success">
+          Cadastrado com sucesso!
+        </Alert>
+      </Snackbar>
     </>
   )
 }

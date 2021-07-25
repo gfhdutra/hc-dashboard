@@ -53,9 +53,10 @@
 }
 
 .errorMsg {
+  margin-top: 0.5rem;
   margin-bottom: -0.5rem;
   font-size: 0.9rem;
-  color: red;
+  color: #ff0000;
 }
 
 .visible {
@@ -67,8 +68,18 @@
 }
 
 .button {
-  margin: 1rem 0;
-  padding: 0.4rem 0.8rem;
+  margin: 1.5rem 0;
+  padding: 0.5rem 1rem;
+  border: 0;
+  border-radius: 3px;
+  font-size: 0.9rem;
+  background-color: #862bdb;
+  color: #fff;
+}
+
+.button:hover {
+  cursor: pointer;
+  background-color: #9334ec;
 }
 
 .cadastro {
