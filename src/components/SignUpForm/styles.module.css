@@ -1,0 +1,86 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.main {
+  flex: 1;
+  max-width: 85%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.title {
+  margin: 0.5rem;
+  line-height: 1.15;
+  font-size: 3rem;
+}
+
+.description {
+  margin: 0.5rem;
+  font-size: 1.3rem;
+}
+
+.signUpForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
+  margin: 1.5rem 0;
+}
+
+.inputField {
+  display: flex;
+  flex-direction: column;
+  margin: 0.3rem 0;
+}
+
+.label {
+  padding: 0.1rem 0;
+}
+
+.input {
+  border-radius: 2px;
+  border: 1px solid #333;
+  padding: 0.3rem;
+  outline: none;
+}
+
+.errorMsg {
+  margin-top: 0.5rem;
+  margin-bottom: -0.5rem;
+  font-size: 0.9rem;
+  color: red;
+}
+
+.visible {
+  visibility: visible;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.button {
+  margin: 1.5rem 0;
+  padding: 0.4rem 0.8rem;
+}
+
+.cadastro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.cadastro a {
+  padding: 0 0.2rem;
+  text-decoration: underline;
+}
