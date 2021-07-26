@@ -1,9 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
-import Smile from '/public/smile.svg'
-import User from '/public/user.svg'
-import Box from '/public/box.svg'
-import Logout from '/public/log-out.svg'
 import styles from "./styles.module.css"
 
 
@@ -16,7 +11,7 @@ export default function NavMenu() {
         <div className={styles.menuItem}>
           <div className={styles.menuIcon}>
             <Link href="/dashboard" passHref>
-              <Image src={Smile} alt=""></Image>
+              <div className={styles.smileImg}></div>
             </Link>
           </div>
           <Link href="/dashboard" passHref>
@@ -28,7 +23,7 @@ export default function NavMenu() {
       <div className={styles.menuItem}>
         <div className={styles.menuIcon}>
           <Link href="/client" passHref>
-            <Image src={User} alt=""></Image>
+            <div className={styles.userImg}></div>
           </Link>
         </div>
         <Link href="/client" passHref>
@@ -39,7 +34,7 @@ export default function NavMenu() {
       <div className={styles.menuItem}>
         <div className={styles.menuIcon}>
           <Link href="/product" passHref>
-            <Image src={Box} alt=""></Image>
+            <div className={styles.productImg}></div>
           </Link>
         </div>
         <Link href="/product" passHref>
@@ -51,7 +46,7 @@ export default function NavMenu() {
       <div className={styles.menuItem}>
         <div className={styles.menuIcon}>
           <Link href="/" passHref>
-            <Image src={Logout} alt=""></Image>
+            <div className={styles.logoutImg}></div>
           </Link>
         </div>
         <Link href="/" passHref>

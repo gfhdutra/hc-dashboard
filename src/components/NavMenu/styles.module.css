@@ -47,6 +47,38 @@
   filter: invert(96%) sepia(4%) saturate(0%) hue-rotate(328deg) brightness(105%) contrast(105%);
 }
 
+.smileImg {
+  background-image: url("../../../public/smile.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 24px;
+  height: 24px;
+}
+
+.userImg {
+  background-image: url("../../../public/user.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 24px;
+  height: 24px;
+}
+
+.productImg {
+  background-image: url("../../../public/box.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 24px;
+  height: 24px;
+}
+
+.logoutImg {
+  background-image: url("../../../public/log-out.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 24px;
+  height: 24px;
+}
+
 .navFooter {
   margin-top: auto;
   margin-bottom: 3rem;
