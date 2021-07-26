@@ -39,7 +39,7 @@
   box-sizing: border-box;
   width: 24px;
   height: 24px;
-  margin-left: 1.5rem;
+  margin-left: 1rem;
   margin-right: 1rem;
   transform: translateY(1.5px);
   /* filtro para #862bdb
@@ -82,4 +82,10 @@
 .navFooter {
   margin-top: auto;
   margin-bottom: 3rem;
+}
+
+@media (max-width: 600px) {
+  .menuWrapper {
+    width: 3.5rem;
+  }
 }
