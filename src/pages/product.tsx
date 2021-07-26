@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head'
 import NavMenu from '../components/NavMenu';
-import styles from '../styles/Dashboard.module.css'
+import ClientForm from '../components/ClientForm';
+import styles from '../styles/Product.module.css'
 
 
-export default function Dashboard() {
+export default function Product() {
   const [ userName, setUserName ] = useState('')
 
   useEffect(() => {
@@ -24,12 +25,14 @@ export default function Dashboard() {
       <NavMenu />
       <main className={styles.mainContent}>
         <h1 className={styles.title}>
-          Olá, {userName}
+          Produtos
         </h1>
 
         <p className={styles.description}>
-          Este é o seu dashboard 
+          Gerencie aqui seus produtos
         </p>
+
+        <ClientForm />
       </main>
 
     </div>

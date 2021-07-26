@@ -13,7 +13,7 @@ type UserData = {
 const usersData: UserData[] = []
 let signUpError: boolean = false
 
-export default function SignUpForm() {
+export default function ClientForm() {
   const [ email, setEmail  ] = useState('')
   const [ user, setUser ] = useState('')
   const [ password, setPassword  ] = useState('')
