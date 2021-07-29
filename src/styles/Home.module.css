@@ -4,6 +4,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: #f7f8fc;
 }
 
 .main {
@@ -19,10 +20,12 @@
   margin: 0.5rem 0; 
   line-height: 1;
   font-size: 3rem;
+  font-weight: 100;
 }
 
 .description {
   margin: 0.5rem 0; 
   line-height: 1;
   font-size: 1.5rem;
+  font-weight: 100;
 }

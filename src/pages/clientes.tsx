@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import Head from 'next/head'
 import NavMenu from '../components/NavMenu';
 import ClientForm from '../components/ClientForm';
-import styles from '../styles/Product.module.css'
+import styles from '../styles/Clientes.module.css'
 
 
-export default function Product() {
+export default function Clientes() {
   const [ userName, setUserName ] = useState('')
 
   useEffect(() => {
@@ -25,11 +25,11 @@ export default function Product() {
       <NavMenu />
       <main className={styles.mainContent}>
         <h1 className={styles.title}>
-          Produtos
+          Clientes
         </h1>
 
         <p className={styles.description}>
-          Gerencie aqui seus produtos
+          Gerencie aqui seus clientes
         </p>
 
         <ClientForm />
