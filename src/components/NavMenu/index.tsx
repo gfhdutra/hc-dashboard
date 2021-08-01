@@ -1,10 +1,15 @@
-import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import styles from "./styles.module.css"
 
 
 export default function NavMenu() {
   const router = useRouter()
+
+  function handleLogout() {
+    localStorage.setItem('currentUser', null )
+    router.push('/')
+  }
 
   return (
     <div className={styles.menuWrapper}>
@@ -16,41 +21,43 @@ export default function NavMenu() {
 
       <Link href="/dashboard" passHref>
         <div className={styles.menuItem + " " + (router.pathname == "/dashboard" ? styles.active : " ")} >
-          <div className={styles.menuIcon} 
+          <div 
+          className={styles.menuIcon} 
           style={{ backgroundImage: "url(/home.svg)" }}>
           </div>
           <span>Home</span>
         </div>
       </Link>
 
-      <Link href="/clientes" passHref>
-        <div className={styles.menuItem + " " + (router.pathname == "/clientes" ? styles.active : " ")} >
-          <div className={styles.menuIcon} 
+      <Link href="/dashboard/clientes" passHref>
+        <div className={styles.menuItem + " " + (router.pathname == "/dashboard/clientes" ? styles.active : " ")} >
+          <div 
+          className={styles.menuIcon} 
           style={{ backgroundImage: "url(/contacts.svg)" }}>
           </div>
           <span>Clientes</span>
         </div>
       </Link>
       
-      <Link href="/produtos" passHref>
-        <div className={styles.menuItem + " " + (router.pathname == "/produtos" ? styles.active : " ")} >
-          <div className={styles.menuIcon} 
+      <Link href="/dashboard/produtos" passHref>
+        <div className={styles.menuItem + " " + (router.pathname == "/dashboard/produtos" ? styles.active : " ")} >
+          <div 
+          className={styles.menuIcon} 
           style={{ backgroundImage: "url(/box.svg)" }}>
           </div>
           <span>Produtos</span>
         </div>
       </Link>
       
-      <Link href="/" passHref>
-        <div className={styles.navFooter}>
-          <div className={styles.menuItem + " " + (router.pathname == "/" ? styles.active : " ")} >
-            <div className={styles.menuIcon} 
-            style={{ backgroundImage: "url(/log-out.svg)" }}>
-            </div>
-            <span>Logout</span>
+      <div className={styles.navFooter} onClick={handleLogout}>
+        <div className={styles.menuItem + " " + (router.pathname == "/" ? styles.active : " ")} >
+          <div 
+          className={styles.menuIcon} 
+          style={{ backgroundImage: "url(/log-out.svg)" }}>
           </div>
+          <span>Logout</span>
         </div>
-      </Link>
+      </div>
 
     </nav>
   </div>

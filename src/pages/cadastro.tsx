@@ -7,16 +7,14 @@ export default function Cadastro() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Dashboard - Cadastro</title>
-        <meta name="description" content="Dashboard - SignUp" />
+        <title>Dashboard-SignUp</title>
+        <meta name="description" content="Dashboard SignUp" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-
         <h1 className={styles.title}>
           Cadastre-se
         </h1>
-
         <p className={styles.description}>
           Crie sua conta rápido e fácil
         </p>
@@ -26,7 +24,6 @@ export default function Cadastro() {
         <Link href="/">
           <a>home</a>
         </Link>
-
       </main>
     </div>
   )

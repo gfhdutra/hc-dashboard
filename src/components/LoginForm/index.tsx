@@ -18,10 +18,7 @@ export default function LoginForm() {
     }
   }, [])
 
-  function handleLogin(e: any) {
-    e.preventDefault()
-    setLoginError(true)
-    setErrorMsg('Usuário ou senha incorretos')
+  function verifyLogin() {
     if (localStorage.getItem('usersData') !== null) {
       usersData.map((users: any) => {
         if (user == users.user && password == users.password) {
@@ -41,9 +38,17 @@ export default function LoginForm() {
     }
   }
 
+  function handleLogin(e: any) {
+    e.preventDefault()
+    setLoginError(true)
+    setErrorMsg('Usuário ou senha incorretos')
+    verifyLogin()
+  }
+
   return (
     <>
       <form className={styles.loginForm} onSubmit={handleLogin}>
+
         <div className={styles.inputField}>
           <label className={styles.label} htmlFor="user">Usuário</label>
           <input 
@@ -67,8 +72,10 @@ export default function LoginForm() {
           />
         </div>
 
-        <span className={styles.errorMsg + " " + (loginError ? styles.visible : styles.hidden)}>{errorMsg}</span>
-
+        <span 
+        className={styles.errorMsg + " " + (loginError ? styles.visible : styles.hidden)}>
+        {errorMsg}
+        </span>
         <button className={styles.button}>Login</button>
       </form>
 

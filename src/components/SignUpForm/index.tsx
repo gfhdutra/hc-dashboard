@@ -30,8 +30,16 @@ export default function SignUpForm() {
     }
   }, [])
 
-  function createUser(email: string, usuario: string, senha: string): UserData {
-    return { email: email, user: usuario, password: senha }
+  function createUser(
+    email: string, 
+    usuario: string, 
+    senha: string
+    ): UserData {
+    return { 
+      email: email, 
+      user: usuario, 
+      password: senha 
+    }
   }
 
   function setError(bool: boolean) {
@@ -45,10 +53,7 @@ export default function SignUpForm() {
     setAlertMsg(false)
   }
 
-  function handleSignUp(e: any) {
-    e.preventDefault()
-    setError(false)
-    setMsgErro('Ocorreu um erro')
+  function verifySignUp() {
     usersData.map((users) => {
       if (email == users.email) {
         setMsgErro('Email já cadastrado')
@@ -59,6 +64,13 @@ export default function SignUpForm() {
         setError(true)
       }
     })
+  }
+
+  function handleSignUp(e: any) {
+    e.preventDefault()
+    setError(false)
+    setMsgErro('Ocorreu um erro')
+    verifySignUp()
     if (!signUpError) {
       usersData.push(createUser(email, user, password))
       localStorage.setItem('usersData', JSON.stringify(usersData))
@@ -75,6 +87,7 @@ export default function SignUpForm() {
   return (
     <>
       <form className={styles.signUpForm} onSubmit={handleSignUp}>
+
         <div className={styles.inputField}>
           <label className={styles.label} htmlFor="email">E-mail</label>
           <input 
@@ -109,7 +122,10 @@ export default function SignUpForm() {
           />
         </div>
 
-        <span className={styles.errorMsg + " " + (signUpError ? styles.visible : styles.hidden)}>{msgErro}</span>
+        <span 
+        className={styles.errorMsg + " " + (signUpError ? styles.visible : styles.hidden)}>
+        {msgErro}
+        </span>
 
         <button className={styles.button}>Cadastrar</button>
       </form>
