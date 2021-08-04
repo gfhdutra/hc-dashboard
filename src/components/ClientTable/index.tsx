@@ -1,10 +1,8 @@
+import { useClient } from "src/contexts/ClientContext"
 import styles from "./styles.module.css"
 
-export default function ClientTable({ clientsData }) {
-
-  function setClientContent(id) {
-    console.log(id)
-  }
+export default function ClientTable() {
+  const { clientsDataList, setClientId, setCurrentId } = useClient()
 
   return (
     <>
@@ -17,23 +15,25 @@ export default function ClientTable({ clientsData }) {
             <th>E-mail</th>
             <th>Telefone</th>
             <th>Endereço</th>
-            <th>EDITAR</th>
+            <th>Ação</th>
           </tr>
         </thead>
         <tbody>
-        { clientsData.map(client => {
+        { clientsDataList.map(client => {
           return (
-          <>
-          <tr>
+          <tr key={client.id}>
             <td>{client.id}</td>
             <td>{client.name}</td>
             <td>{client.cpf}</td>
             <td>{client.email}</td>
             <td>{client.phone}</td>
             <td>{client.adress}</td>
-            <td><button onClick={() => {setClientContent(client.id)}} >Editar</button></td>
+            <td>
+              <button onClick={() => {setClientId(client.id); setCurrentId(client.id)}}>
+              Editar
+              </button>
+            </td>
           </tr>
-          </>
           )
         }) }
         </tbody>
