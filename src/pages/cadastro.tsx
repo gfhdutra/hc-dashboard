@@ -1,30 +1,55 @@
 import Head from 'next/head'
 import Link from 'next/link';
+import styled from 'styled-components'
 import SignUpForm from '../components/SignUpForm';
-import styles from '../styles/Cadastro.module.css'
 
-export default function Cadastro() { 
+
+export default function Cadastro() {
   return (
-    <div className={styles.container}>
+    <Container>
       <Head>
-        <title>Dashboard-SignUp</title>
-        <meta name="description" content="Dashboard SignUp" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>HC Dashboard - Cadastro</title>
       </Head>
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Cadastre-se
-        </h1>
-        <p className={styles.description}>
-          Crie sua conta rápido e fácil
-        </p>
-
+      <Main>
+        <Title>Cadastre-se</Title>
+        <Description>Crie sua conta rápido e fácil</Description>
         <SignUpForm />
-
-        <Link href="/">
-          <a>home</a>
+        <Link href="/" passHref>
+          <LinkAnchor>home</LinkAnchor>
         </Link>
-      </main>
-    </div>
+      </Main>
+    </Container>
   )
 }
+
+const Container = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f7f8fc;
+`
+const Main = styled.main`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+`
+const Title = styled.h1`
+  margin: 0.5rem 0; 
+  line-height: 1;
+  font-size: 3rem;
+  font-weight: 100;
+`
+const Description = styled.p`
+  margin: 0.5rem 0; 
+  line-height: 1;
+  font-size: 1.5rem;
+  font-weight: 100;
+`
+const LinkAnchor = styled.a`
+  text-decoration: none;
+`

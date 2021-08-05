@@ -1,25 +1,47 @@
 import Head from 'next/head'
 import NavMenu from '../../components/NavMenu'
-import styles from '../../styles/Produtos.module.css'
+import styled from 'styled-components'
+
 
 export default function Produtos() {
 
   return (
-    <div className={styles.container}>
+    <Container>
       <Head>
-        <title>Dashboard Produtos</title>
-        <meta name="description" content="Dashboard Produtos" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>User Dashboard - Produtos</title>
       </Head>
       <NavMenu />
-      <main className={styles.mainContent}>
-        <h1 className={styles.title}>
-          Produtos
-        </h1>
-        <p className={styles.description}>
-          Gerencie aqui seus produtos
-        </p>
-      </main>
-    </div>
+      <Main>
+        <Title>Produtos</Title>
+        <Desciption>Gerencie aqui seus produtos</Desciption>
+      </Main>
+    </Container>
   )
 }
+
+const Container = styled.div`
+  min-height: 100vh;
+  display: flex;
+`
+const Main = styled.main`
+  width: 100%;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: #f7f8fc;
+`
+const Title = styled.h1`
+  margin: 1rem 0; 
+  line-height: 1;
+  font-size: 3rem;
+  font-weight: 100;
+`
+const Desciption = styled.p`
+  margin: 1rem 0; 
+  line-height: 1;
+  font-size: 1.5rem;
+  font-weight: 100;
+`

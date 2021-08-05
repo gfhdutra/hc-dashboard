@@ -1,16 +1,13 @@
-import styled from 'styled-components'
 import Head from 'next/head'
-import LoginForm from '../components/LoginForm';
-// import styles from '../styles/Home.module.css'
+import styled from 'styled-components'
+import LoginForm from '../components/LoginForm'
 
 
 export default function Home() {
   return (
     <Container>
       <Head>
-        <title>HC-Dashboard-Home</title>
-        <meta name="description" content="Dashboard Home" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>HC Dashboard - Home</title>
       </Head>
       <Main>
         <Title>HC Dashboard</Title>
@@ -29,7 +26,6 @@ const Container = styled.div`
   align-items: center;
   background-color: #f7f8fc;
 `
-
 const Main = styled.main`
   flex: 1;
   display: flex;
@@ -38,14 +34,12 @@ const Main = styled.main`
   align-items: center;
   text-align: center;
 `
-
 const Title = styled.h1`
   margin: 0.5rem 0; 
   line-height: 1;
   font-size: 3rem;
   font-weight: 100;
 `
-
 const Description = styled.p`
   margin: 0.5rem 0; 
   line-height: 1;
