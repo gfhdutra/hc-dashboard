@@ -6,6 +6,8 @@ import {
   FormEvent,
   useEffect,
 } from 'react'
+import Swal from 'sweetalert2'
+import { v4 as uuidv4 } from 'uuid';
 
 
 type ClientData = {
@@ -19,14 +21,16 @@ type ClientData = {
 
 type ClientContextData = {
   clientsDataList: ClientData[],
-  clientsDataListOrdered: ClientData[],
   id: number,
+  currentId: number,
   name: string,
   cpf: string,
   email: string,
   phone: string,
   adress: string,
   newClientError: boolean,
+  updateClient: boolean,
+  updateTable: boolean,
   msgErro: string,
   setClientsDataList: any;
   setId: any;
@@ -37,20 +41,18 @@ type ClientContextData = {
   setPhone: any;
   setAdress: any;
   setNewClientError: any;
+  setUpdateClient: any;
+  setUpdateTable: any;
   setMsgErro: any;
-  sortClientsList: (a, b) => number,
-  createClient: (
-    id: number,
-    name: string,
-    cpf: string,
-    email: string,
-    phone: string,
-    adress: string
-  ) => ClientData
+  currentClient: ClientData,
+  sortClientsList: (a: ClientData, b: ClientData) => number,
+  createClient: (currentClient: ClientData) => ClientData
   clearForm: () => void,
   setClientId: (newId: number) => void,
-  editClientForm: (id) => void,
+  editClientForm: (id: number) => void,
   verifyNewClient: () => void,
+  deleteConfirmation: (id: number) => void,
+  removeClient: (id: number) => void,
   handleModifyClientsList: (e: FormEvent) => void,
 }
 
@@ -62,7 +64,7 @@ export const ClientContext = createContext({} as ClientContextData);
 
 export function ClientContextProvider({ children }: ClientContextProviderProps) {
   const [clientsDataList, setClientsDataList] = useState([])
-  const [id, setId] = useState(0)
+  const [id, setId] = useState(Date.now())
   const [currentId, setCurrentId] = useState(undefined)
   const [name, setName] = useState('')
   const [cpf, setCpf] = useState('')
@@ -71,42 +73,36 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
   const [adress, setAdress] = useState('')
   const [newClientError, setNewClientError] = useState(false)
   const [updateClient, setUpdateClient] = useState(false)
+  const [updateTable, setUpdateTable] = useState(false)
   const [msgErro, setMsgErro] = useState('Ocorreu um erro')
+  const currentClient: ClientData = {id, name, cpf, email, phone, adress}
 
   useEffect(() => {
     const clientsDataListString = localStorage.getItem('clientsDataList')
     if (clientsDataListString) {
       setClientsDataList(JSON.parse(clientsDataListString))
       if (!updateClient) {
-        setId(clientsDataList.length)
+        setId(Date.now())
       } 
       else if (updateClient) {
         setId(currentId)
       }
     }
-  }, [clientsDataList.length, currentId, updateClient])
+  }, [clientsDataList.length, currentId, updateClient, updateTable])
 
 
-  function sortClientsList(a, b) {
+  function sortClientsList(a: ClientData, b: ClientData) {
     return a.id - b.id;
   }
-  let clientsDataListOrdered = clientsDataList.sort(sortClientsList)
 
-  function createClient(
-    id: number,
-    name: string,
-    cpf: string,
-    email: string,
-    phone: string,
-    adress: string,
-  ): ClientData {
+  function createClient(currentClient: ClientData): ClientData {
     return {
-      id: id,
-      name: name,
-      cpf: cpf,
-      email: email,
-      phone: phone,
-      adress: adress,
+      id: currentClient.id,
+      name: currentClient.name,
+      cpf: currentClient.cpf,
+      email: currentClient.email,
+      phone: currentClient.phone,
+      adress: currentClient.adress,
     }
   }
 
@@ -118,7 +114,14 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
     setAdress('')
   }
 
-  function editClientForm(id) {
+  function setClientId(newId: number) {
+    setCurrentId(newId)
+    editClientForm(newId)
+    setUpdateClient(true)
+    window.scrollTo({top: 0, behavior: 'smooth'})
+  }
+
+  function editClientForm(id: number) {
     clientsDataList.map((client) => {
       if (id === client.id) {
         setName(client.name)
@@ -130,32 +133,54 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
     })
   }
 
-  function setClientId(newId: number) {
-    editClientForm(newId)
-    clientsDataList.map(client => {
-      if (client.id == newId) {
-          let index = clientsDataList.indexOf(client)
-          clientsDataList.splice(index, 1)
-          localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList))
-      }})
-    setUpdateClient(true)
-  }
-
   function verifyNewClient() {
     clientsDataList.map((client) => {
-      if (phone == client.phone) {
+      if (phone === client.phone) {
         setMsgErro('Telefone já cadastrado')
         setNewClientError(true)
       }
-      if (email == client.email) {
+      if (email === client.email) {
         setMsgErro('E-mail já cadastrado')
         setNewClientError(true)
       }
-      if (cpf == client.cpf) {
+      if (cpf === client.cpf) {
         setMsgErro('CPF já cadastrado')
         setNewClientError(true)
       }
     })
+  }
+
+  function deleteConfirmation(id: number) {
+    Swal.fire({
+      title: 'Excluir cadastro?',
+      text: "Esta ação é irreversível!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#862bdb',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Excluir',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        removeClient(id)
+        Swal.fire(
+          'Excluído!',
+          'O cadastro foi excluído com sucesso.',
+          'success'
+        )
+      }
+    })
+  }
+
+  function removeClient(id: number) {
+    clientsDataList.map(client => {
+      if (client.id === id) {
+          let index = clientsDataList.indexOf(client)
+          clientsDataList.splice(index, 1)
+          localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList))
+      }})
+    setUpdateTable(!updateTable)
+    localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList.sort(sortClientsList)))
   }
 
   function handleModifyClientsList(e: FormEvent) {
@@ -163,14 +188,12 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
     setNewClientError(false)
     setMsgErro('Ocorreu um erro')
     // verifyNewClient()
+    if (updateClient) {
+      removeClient(id)
+    }
     if (!newClientError) {
-      clientsDataList.push(createClient(
-        id,
-        name,
-        cpf,
-        email,
-        phone,
-        adress))
+      setId(Date.now())
+      clientsDataList.push(createClient(currentClient))
       localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList))
       clearForm()
     }
@@ -183,31 +206,38 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
     <ClientContext.Provider
       value={{
         clientsDataList,
-        clientsDataListOrdered,
         id,
+        currentId,
         name,
         cpf,
         email,
         phone,
         adress,
         newClientError,
+        updateClient,
+        updateTable,
         msgErro,
-        sortClientsList,
         setClientsDataList,
         setId,
+        setCurrentId,
         setName,
         setCpf,
         setEmail,
         setPhone,
         setAdress,
         setNewClientError,
+        setUpdateClient,
+        setUpdateTable,
         setMsgErro,
+        currentClient,
+        sortClientsList,
         createClient,
         clearForm,
-        setCurrentId,
         setClientId,
         editClientForm,
         verifyNewClient,
+        deleteConfirmation,
+        removeClient,
         handleModifyClientsList,
       }}>
       {children}

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/dist/client/router"
-import { Snackbar } from "@material-ui/core"
-import { Alert } from '@material-ui/lab'
+import Swal from 'sweetalert2'
 import styles from "./styles.module.css"
 
 type UserData = {
@@ -13,15 +12,28 @@ type UserData = {
 let signUpError: boolean = false
 
 export default function SignUpForm() {
-  const [ email, setEmail  ] = useState('')
-  const [ user, setUser ] = useState('')
-  const [ password, setPassword  ] = useState('')
-  const [ usersData, setUsersData ] = useState([])
-  const [ msgErro, setMsgErro ] = useState('Ocorreu um erro')
-  const [ alertMsg, setAlertMsg ] = useState(false);
+  const [email, setEmail] = useState('')
+  const [user, setUser] = useState('')
+  const [password, setPassword] = useState('')
+  const [usersData, setUsersData] = useState([])
+  const [msgErro, setMsgErro] = useState('Ocorreu um erro')
+  const [alertMsg, setAlertMsg] = useState(false);
   const router = useRouter()
-  const vertical = 'top'
-  const horizontal = 'center'
+
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    },
+    willClose: () => {
+      router.push('/')
+    }
+  })
 
   useEffect(() => {
     let usersDataString = localStorage.getItem('usersData')
@@ -31,26 +43,19 @@ export default function SignUpForm() {
   }, [])
 
   function createUser(
-    email: string, 
-    usuario: string, 
+    email: string,
+    usuario: string,
     senha: string
-    ): UserData {
-    return { 
-      email: email, 
-      user: usuario, 
-      password: senha 
+  ): UserData {
+    return {
+      email: email,
+      user: usuario,
+      password: senha
     }
   }
 
   function setError(bool: boolean) {
     return signUpError = bool
-  }
-
-  function handleClose(event: any, reason: any) {
-    if (reason === 'clickaway') {
-      return
-    }
-    setAlertMsg(false)
   }
 
   function verifySignUp() {
@@ -78,67 +83,62 @@ export default function SignUpForm() {
       setEmail('')
       setUser('')
       setPassword('')
-      setTimeout(() => { 
-        router.push('/')
-      }, 2500)
     }
   }
-  
+
+  if (alertMsg) {
+    Toast.fire({
+      icon: 'success',
+      title: 'Cadastrado com sucesso!'
+    })
+  }
+
   return (
     <>
       <form className={styles.signUpForm} onSubmit={handleSignUp}>
 
         <div className={styles.inputField}>
           <label className={styles.label} htmlFor="email">E-mail</label>
-          <input 
-          className={styles.input} 
-          type="email" 
-          id="email"
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)}
-          required
+          <input
+            className={styles.input}
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </div>
         <div className={styles.inputField}>
           <label className={styles.label} htmlFor="user">Usuário</label>
-          <input 
-          className={styles.input} 
-          type="text" 
-          id="user"
-          value={user} 
-          onChange={(e) => setUser(e.target.value)}
-          required
+          <input
+            className={styles.input}
+            type="text"
+            id="user"
+            value={user}
+            onChange={(e) => setUser(e.target.value)}
+            required
           />
         </div>
         <div className={styles.inputField}>
           <label className={styles.label} htmlFor="password">Senha</label>
-          <input 
-          className={styles.input} 
-          type="password"  
-          id="password"
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)}
-          required
+          <input
+            className={styles.input}
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
           />
         </div>
 
-        <span 
-        className={styles.errorMsg + " " + (signUpError ? styles.visible : styles.hidden)}>
-        {msgErro}
+        <span
+          className={styles.errorMsg + " " + (signUpError ? styles.visible : styles.hidden)}>
+          {msgErro}
         </span>
 
         <button className={styles.button}>Cadastrar</button>
       </form>
 
-      <Snackbar
-        anchorOrigin={{ vertical, horizontal }}
-        open={alertMsg}
-        onClose={handleClose}
-        autoHideDuration={2000}>
-        <Alert severity="success">
-          Cadastrado com sucesso!
-        </Alert>
-      </Snackbar>
     </>
   )
 }

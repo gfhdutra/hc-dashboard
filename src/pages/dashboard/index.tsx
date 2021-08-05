@@ -24,9 +24,9 @@ export default function Dashboard() {
     }
   }, [router])
 
-  // if (!validUser) {
-  //   return <RedirectUser/>
-  // }
+  if (!validUser) {
+    return <RedirectUser/>
+  }
 
   return (
     <div className={styles.container}>

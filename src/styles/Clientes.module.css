@@ -29,7 +29,7 @@
   font-weight: 100;
 }
 
-.container button {
+/* .container button {
   margin-top: 1rem;
   padding: 1rem;
   border: 0;
@@ -43,7 +43,7 @@
 .container button:hover {
   cursor: pointer;
   background-color: #9334ec;
-}
+} */
 
 @media (max-width: 600px) {
 

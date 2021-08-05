@@ -1,4 +1,3 @@
-import { useEffect, useState, CSSProperties } from "react"
 import { useClient } from "src/contexts/ClientContext"
 import styles from "./styles.module.css"
 
