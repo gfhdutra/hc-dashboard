@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/dist/client/router"
-import Link from "next/link"
 import styled from "styled-components"
 
 type LoginError = {
@@ -50,41 +49,31 @@ export default function LoginForm() {
   }
 
   return (
-    <>
-      <StyledLoginForm onSubmit={handleLogin}>
-        <InputFieldDiv>
-          <Label htmlFor="user">Usuário</Label>
-          <Input
-            type="text"
-            id="user"
-            value={user}
-            onChange={(e) => setUser(e.target.value)}
-            required
-          />
-        </InputFieldDiv>
-        <InputFieldDiv>
-          <Label htmlFor="password">Senha</Label>
-          <Input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </InputFieldDiv>
+    <StyledLoginForm onSubmit={handleLogin}>
+      <InputFieldDiv>
+        <Label htmlFor="user">Usuário</Label>
+        <Input
+          type="text"
+          id="user"
+          value={user}
+          onChange={(e) => setUser(e.target.value)}
+          required
+        />
+      </InputFieldDiv>
+      <InputFieldDiv>
+        <Label htmlFor="password">Senha</Label>
+        <Input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </InputFieldDiv>
 
-        <ErrorMsg loginError={loginError}>{errorMsg}</ErrorMsg>
-        <Button>Login</Button>
-      </StyledLoginForm>
-
-      <Cadastro>
-        <Description>não tem cadastro?
-          <Link href="/cadastro" passHref>
-            <LinkAnchor>cadastre-se</LinkAnchor>
-          </Link>
-        </Description>
-      </Cadastro>
-    </>
+      <ErrorMsg loginError={loginError}>{errorMsg}</ErrorMsg>
+      <Button>Login</Button>
+    </StyledLoginForm>
   )
 }
 
@@ -130,18 +119,4 @@ const Button = styled.button`
     cursor: pointer;
     background-color: #9334ec;
   }
-`
-const Cadastro = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin: 1rem 0;
-`
-const Description = styled.p`
-  font-size: 1rem;
-`
-const LinkAnchor = styled.a`
-  padding: 0 0.2rem;
-  text-decoration: underline;
 `

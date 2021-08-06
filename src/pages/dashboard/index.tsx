@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import NavMenu from '../../components/NavMenu'
 import styled from 'styled-components'
-// import RedirectUser from 'src/components/RedirectUser'
+import RedirectUser from 'src/components/RedirectUser'
 
 
 export default function Dashboard() {

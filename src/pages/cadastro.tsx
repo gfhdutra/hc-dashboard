@@ -13,7 +13,9 @@ export default function Cadastro() {
       <Main>
         <Title>Cadastre-se</Title>
         <Description>Crie sua conta rápido e fácil</Description>
+
         <SignUpForm />
+
         <Link href="/" passHref>
           <LinkAnchor>home</LinkAnchor>
         </Link>
