@@ -55,6 +55,7 @@ export default function LoginForm() {
         <Input
           type="text"
           id="user"
+          placeholder="Usuário"
           value={user}
           onChange={(e) => setUser(e.target.value)}
           required
@@ -65,6 +66,7 @@ export default function LoginForm() {
         <Input
           type="password"
           id="password"
+          placeholder="Senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -88,15 +90,15 @@ const StyledLoginForm = styled.form`
 const InputFieldDiv = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 0.3rem 0;
+  margin: 0.5rem 0;
 `
 const Label = styled.label`
   padding: 0.1rem 0;
 `
 const Input = styled.input`
-  border-radius: 2px;
-  border: 1px solid #333;
-  padding: 0.3rem;
+  border-radius: 0.2rem;
+  border: 2px solid #61636f;
+  padding: 0.5rem;
   outline: none;
 `
 const ErrorMsg = styled.span`

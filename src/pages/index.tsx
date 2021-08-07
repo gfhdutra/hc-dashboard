@@ -21,7 +21,6 @@ export default function Home() {
             <LinkAnchor>cadastre-se</LinkAnchor>
           </Link>
         </CadastroText>
-
       </Main>
     </Container>
   )
@@ -55,17 +54,10 @@ const Description = styled.p`
   font-size: 1.5rem;
   font-weight: 100;
 `
-const Cadastro = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin: 1rem 0;
-`
 const CadastroText = styled.p`
   font-size: 1rem;
 `
 const LinkAnchor = styled.a`
+  color: inherit;
   padding: 0 0.2rem;
-  text-decoration: underline;
 `

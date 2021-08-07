@@ -1,10 +1,9 @@
 import Head from 'next/head'
-import NavMenu from '../../components/NavMenu'
 import styled from 'styled-components'
+import NavMenu from '../../components/NavMenu'
 
 
 export default function Produtos() {
-
   return (
     <Container>
       <Head>

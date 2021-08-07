@@ -12,7 +12,7 @@ export default function Dashboard() {
   const [validUser, setValidUser] = useState(false)
 
   useEffect(() => {
-    let currentUser = localStorage.getItem('currentUser')
+    let currentUser: any = localStorage.getItem('currentUser')
     if (currentUser === 'null') {
       setValidUser(false)
       // setTimeout(()=> {
@@ -42,7 +42,6 @@ export default function Dashboard() {
     </Container>
   )
 }
-
 
 const Container = styled.div`
   min-height: 100vh;

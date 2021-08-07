@@ -1,4 +1,6 @@
+import { ChangeEvent } from 'react'
 import { useClient } from "src/contexts/ClientContext"
+import { default as NumberFormat } from 'react-number-format';
 import styled from "styled-components"
 
 type NewClientError = {
@@ -23,7 +25,7 @@ export default function ClientForm() {
   } = useClient()
 
   return (
-    <Modal>
+    <FormDiv>
       <StyledClientForm onSubmit={handleModifyClientsList}>
 
         <InputFieldDiv>
@@ -31,6 +33,7 @@ export default function ClientForm() {
           <Input
             type="text"
             id="name"
+            placeholder="Nome Completo"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -38,12 +41,15 @@ export default function ClientForm() {
         </InputFieldDiv>
         <InputFieldDiv>
           <label htmlFor="cpf">CPF</label>
-          <Input
-            type="number"
+          <FormatedInput
+            displayType="input"
+            type="text"
             id="cpf"
+            placeholder="123.456.789-10"
+            format="###.###.###-##"
+            mask="_"
             value={cpf}
-            onChange={(e) => setCpf(e.target.value)}
-            required
+            onChange={(e: ChangeEvent<HTMLFormElement>) => setCpf(e.target.value)}
           />
         </InputFieldDiv>
         <InputFieldDiv>
@@ -51,6 +57,7 @@ export default function ClientForm() {
           <Input
             type="email"
             id="email"
+            placeholder="nome@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -58,40 +65,40 @@ export default function ClientForm() {
         </InputFieldDiv>
         <InputFieldDiv>
           <label htmlFor="phone">Telefone</label>
-          <Input
-            type="number"
+          <FormatedInput
+            displayType="input"
+            type="text"
             id="phone"
+            placeholder="+55 (11) 9988-7766"
+            format="+## (##) ####-####"
+            mask="_"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            required
+            onChange={(e: ChangeEvent<HTMLFormElement>) => setPhone(e.target.value)}
           />
         </InputFieldDiv>
-        <InputFieldDiv>
+        <InputFieldDivAdress>
           <label htmlFor="adress">Endereço</label>
           <Input
             type="text"
             id="adress"
+            placeholder="Endereço"
             value={adress}
             onChange={(e) => setAdress(e.target.value)}
             required
           />
-        </InputFieldDiv>
+        </InputFieldDivAdress>
 
-        <ErrorMsg newClientError={newClientError}>{msgErro}</ErrorMsg>
+        {/* <ErrorMsg newClientError={newClientError}>{msgErro}</ErrorMsg> */}
         <Button>Cadastrar</Button>
       </StyledClientForm>
-    </Modal>
+    </FormDiv>
   )
 }
 
-
-const Modal = styled.div`
-  margin: 2rem;
-  visibility: visible;
-  padding: 3rem;
-  padding-bottom: 2rem;
-  background-color: #61636f;
-  color: #fff;
+const FormDiv = styled.div`
+  width: 90%;
+  margin-top: 2rem;
+  color: #363740;
 `
 const StyledClientForm = styled.form`
   display: grid;
@@ -101,18 +108,30 @@ const StyledClientForm = styled.form`
 const InputFieldDiv = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  
+  align-items: flex-start;  
   label {
     padding: 0.1rem 0;
   }
 `
+const InputFieldDivAdress = styled(InputFieldDiv)`
+  grid-column: 1 / 3;
+`
 const Input = styled.input`
   border-radius: 2px;
-  padding: 0.5rem;
-  height: 32px;
-  width: 180px;
-  border: 1px solid #333;
+  padding: 0.7rem;
+  height: 2.3rem;
+  width: 100%;
+  border: 2px solid #61636f;
+  border-radius: 0.2rem;
+  outline: none;
+`
+const FormatedInput = styled(NumberFormat)`
+  border-radius: 2px;
+  padding: 0.7rem;
+  height: 2.3rem;
+  width: 100%;
+  border: 2px solid #61636f;
+  border-radius: 0.2rem;
   outline: none;
 `
 const ErrorMsg = styled.span`
@@ -124,18 +143,17 @@ const ErrorMsg = styled.span`
 `
 const Button = styled.button`
   grid-column: 1 / 3;
-  margin: 1rem auto;
-  width: 10rem;
-  height: 3rem;
+  margin: auto;
+  width: 8rem;
+  height: 2.5rem;
   border: 0;
   border-radius: 3px;
   font-size: 1.1rem;
-  font-weight: 600;
   background-color: #862bdb;
   color: #fff;
 
   &:hover {
   cursor: pointer;
-  background-color: #9334ec;
+  background-color: #741cc7;
 }
 `

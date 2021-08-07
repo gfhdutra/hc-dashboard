@@ -7,7 +7,6 @@ import {
   useEffect,
 } from 'react'
 import Swal from 'sweetalert2'
-import { v4 as uuidv4 } from 'uuid';
 
 
 type ClientData = {
@@ -63,9 +62,9 @@ type ClientContextProviderProps = {
 export const ClientContext = createContext({} as ClientContextData);
 
 export function ClientContextProvider({ children }: ClientContextProviderProps) {
-  const [clientsDataList, setClientsDataList] = useState([])
+  const [clientsDataList, setClientsDataList] = useState<ClientData[]>([])
   const [id, setId] = useState(Date.now())
-  const [currentId, setCurrentId] = useState(undefined)
+  const [currentId, setCurrentId] = useState(Number)
   const [name, setName] = useState('')
   const [cpf, setCpf] = useState('')
   const [email, setEmail] = useState('')
@@ -122,7 +121,7 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
   }
 
   function editClientForm(id: number) {
-    clientsDataList.map((client) => {
+    clientsDataList.map((client: ClientData) => {
       if (id === client.id) {
         setName(client.name)
         setCpf(client.cpf)
@@ -134,7 +133,7 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
   }
 
   function verifyNewClient() {
-    clientsDataList.map((client) => {
+    clientsDataList.map((client: ClientData) => {
       if (phone === client.phone) {
         setMsgErro('Telefone já cadastrado')
         setNewClientError(true)
@@ -173,7 +172,7 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
   }
 
   function removeClient(id: number) {
-    clientsDataList.map(client => {
+    clientsDataList.map((client: ClientData) => {
       if (client.id === id) {
           let index = clientsDataList.indexOf(client)
           clientsDataList.splice(index, 1)

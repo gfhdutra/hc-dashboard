@@ -8,13 +8,13 @@ export default function ClientTable() {
     <Table>
       <thead>
         <tr>
-          <th>ID</th>
+          <th id="id">ID</th>
           <th>Nome Completo</th>
           <th>CPF</th>
           <th>E-mail</th>
           <th>Telefone</th>
           <th>Endereço</th>
-          <th colSpan={2}>Ação</th>
+          <th>Ação</th>
         </tr>
       </thead>
       <tbody>
@@ -31,8 +31,6 @@ export default function ClientTable() {
                 <Button onClick={() => { setClientId(client.id) }}>
                   Editar
                 </Button>
-              </td>
-              <td>
                 <RemoveButton onClick={() => { deleteConfirmation(client.id) }}>
                   Excluir
                 </RemoveButton>
@@ -45,7 +43,6 @@ export default function ClientTable() {
   )
 }
 
-
 const Table = styled.table`
   border-collapse: collapse;
   width: 90%;
@@ -56,9 +53,16 @@ const Table = styled.table`
     color: #fff;
   }
   td, th {
-    border: 1px solid #cecdcd;
+    /* min-width: 125px; */
     text-align: center;
     padding: 0.5rem;
+    overflow: hidden;
+  }
+  th:first-child {
+    min-width: 50px;
+  }
+  th:not(:first-child) {
+    min-width: 160px;
   }
   tbody tr:nth-child(odd) {
     background-color: #e7e7e7;
@@ -66,19 +70,20 @@ const Table = styled.table`
 `
 const Button = styled.button`
   padding: 0.6rem;
+  margin: 0 0.3rem;
   border: 0;
   border-radius: 3px;
   font-size: 0.9rem;
-  background-color: #c7b40b;
+  background-color: #6495ed;
   color: #fff;
   &:hover{
     cursor: pointer;
-    background-color: #d4c113;
+    background-color: #557fce;
   }
 `
 const RemoveButton = styled(Button)`
-  background-color: #d33;
+  background-color: #ff4500;
   &:hover {
-    background-color: #f04646;
+    background-color: #db4008;
   }
 `

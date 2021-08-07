@@ -1,13 +1,12 @@
+import { ClientContextProvider } from '../../contexts/ClientContext'
 import Head from 'next/head'
+import styled from 'styled-components'
 import NavMenu from '../../components/NavMenu'
 import ClientForm from '../../components/ClientForm'
 import ClientTable from 'src/components/ClientTable'
-import { ClientContextProvider } from '../../contexts/ClientContext'
-import styled from 'styled-components'
 
 
 export default function Clientes() {
-
   return (
     <ClientContextProvider>
       <Container>
@@ -26,23 +25,21 @@ export default function Clientes() {
   )
 }
 
-
 const Container = styled.div`
   min-height: 100vh;
   display: flex;
 `
 const Main = styled.main`
   width: 100%;
-  padding: 0 1rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
   background-color: #f7f8fc;
 `
 const Title = styled.h1`
-  margin: 1rem 0; 
+  margin: 2rem 0;
   line-height: 1;
   font-size: 3rem;
   font-weight: 100;

@@ -18,7 +18,7 @@ export default function SignUpForm() {
   const [email, setEmail] = useState('')
   const [user, setUser] = useState('')
   const [password, setPassword] = useState('')
-  const [usersData, setUsersData] = useState([])
+  const [usersData, setUsersData] = useState<UserData[]>([])
   const [errorMsg, setErrorMsg] = useState('Ocorreu um erro')
   const [alertMsg, setAlertMsg] = useState(false);
   const router = useRouter()
@@ -62,7 +62,7 @@ export default function SignUpForm() {
   }
 
   function verifySignUp() {
-    usersData.map((users) => {
+    usersData.map((users: UserData) => {
       if (email == users.email) {
         setErrorMsg('Email já cadastrado')
         setError(true)
@@ -104,6 +104,7 @@ export default function SignUpForm() {
         <Input
           type="email"
           id="email"
+          placeholder="E-mail"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -114,6 +115,7 @@ export default function SignUpForm() {
         <Input
           type="text"
           id="user"
+          placeholder="Usuário"
           value={user}
           onChange={(e) => setUser(e.target.value)}
           required
@@ -124,6 +126,7 @@ export default function SignUpForm() {
         <Input
           type="password"
           id="password"
+          placeholder="Senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -147,15 +150,15 @@ const StyledSignUpForm = styled.form`
 const InputFieldDiv = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 0.3rem 0;
+  margin: 0.5rem 0;
 `
 const Label = styled.label`
   padding: 0.1rem 0;
 `
 const Input = styled.input`
-  border-radius: 2px;
-  border: 1px solid #333;
-  padding: 0.3rem;
+  border-radius: 0.2rem;
+  border: 2px solid #61636f;
+  padding: 0.5rem;
   outline: none;
 `
 const ErrorMsg = styled.span`

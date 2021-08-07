@@ -53,5 +53,6 @@ const Description = styled.p`
   font-weight: 100;
 `
 const LinkAnchor = styled.a`
+  color: inherit;
   text-decoration: none;
 `
