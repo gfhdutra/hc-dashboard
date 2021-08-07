@@ -12,7 +12,6 @@ type UserData = {
 type SignUpError = {
   signUpError: boolean,
 }
-
 let signUpError: boolean = false
 
 export default function SignUpForm() {
