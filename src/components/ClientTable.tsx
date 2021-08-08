@@ -5,6 +5,7 @@ export default function ClientTable() {
   const { clientsDataList, setClientId, deleteConfirmation } = useClient()
 
   return (
+    <Div>
     <Table>
       <thead>
         <tr>
@@ -28,62 +29,80 @@ export default function ClientTable() {
               <td>{client.phone}</td>
               <td>{client.adress}</td>
               <td>
-                <Button onClick={() => { setClientId(client.id) }}>
-                  Editar
-                </Button>
-                <RemoveButton onClick={() => { deleteConfirmation(client.id) }}>
-                  Excluir
-                </RemoveButton>
+                <Actions>
+                  <EditIcon onClick={() => { setClientId(client.id) }}
+                    style={{ backgroundImage: "url(/edit-2.svg)" }}>
+                  </EditIcon>
+                  <TrashIcon onClick={() => { deleteConfirmation(client.id) }}
+                    style={{ backgroundImage: "url(/trash.svg)" }}>
+                  </TrashIcon>
+                </Actions>
               </td>
             </tr>
           )
         })}
       </tbody>
     </Table>
+    </Div>
   )
 }
 
-const Table = styled.table`
-  border-collapse: collapse;
+const Div = styled.div`
   width: 90%;
-  margin: 2rem;
+  margin: 2rem 0;
+  overflow-x: auto;
+`
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
 
   thead {
     background-color: #363740;
     color: #fff;
   }
   td, th {
-    /* min-width: 125px; */
     text-align: center;
     padding: 0.5rem;
-    overflow: hidden;
   }
-  th:first-child {
-    min-width: 50px;
-  }
-  th:not(:first-child) {
-    min-width: 160px;
+  tbody tr {
+    height: 50px;
   }
   tbody tr:nth-child(odd) {
     background-color: #e7e7e7;
   }
-`
-const Button = styled.button`
-  padding: 0.6rem;
-  margin: 0 0.3rem;
-  border: 0;
-  border-radius: 3px;
-  font-size: 0.9rem;
-  background-color: #6495ed;
-  color: #fff;
-  &:hover{
-    cursor: pointer;
-    background-color: #557fce;
+  tbody td:first-child {
+    min-width: 50px;
+  }
+  tbody td:not(:first-child) {
+    min-width: 160px;
+    /* max-width: 200px; */
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    overflow: hidden;
   }
 `
-const RemoveButton = styled(Button)`
-  background-color: #ff4500;
-  &:hover {
-    background-color: #db4008;
+const Actions = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+const EditIcon = styled.div`
+  margin: 0 .6rem;
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: invert(51%) sepia(83%) saturate(2028%) hue-rotate(199deg) brightness(105%) contrast(86%);
+  &:hover{
+    cursor: pointer;
+    filter: invert(38%) sepia(80%) saturate(2592%) hue-rotate(207deg) brightness(96%) contrast(94%);
+  }
+`
+const TrashIcon = styled(EditIcon)`
+  filter: invert(51%) sepia(73%) saturate(6674%) hue-rotate(1deg) brightness(100%) contrast(106%);
+  &:hover{
+    filter: invert(27%) sepia(58%) saturate(5903%) hue-rotate(3deg) brightness(104%) contrast(102%);
   }
 `

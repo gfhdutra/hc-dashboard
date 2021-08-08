@@ -26,17 +26,28 @@ export default function Clientes() {
 }
 
 const Container = styled.div`
+  width: 100vw;
+  max-width: 100%;
   min-height: 100vh;
-  display: flex;
+  display: grid;
+  grid-template-columns: 16rem auto;
+  @media (max-width: 600px) {
+    grid-template-columns: 4.5rem auto;
+  }
 `
 const Main = styled.main`
-  width: 100%;
+  width: calc(100vw - 16rem);
+  max-width: 98%;
+  /* padding: 0 1rem; */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   text-align: center;
   background-color: #f7f8fc;
+  @media (max-width: 600px) {
+    width: calc(100vw - 4.5rem);
+  }
 `
 const Title = styled.h1`
   margin: 2rem 0;

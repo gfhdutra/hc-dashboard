@@ -12,7 +12,7 @@ export default function NavMenu() {
   let currentRoute = router.pathname
 
   function handleLogout() {
-    localStorage.setItem('currentUser', null)
+    localStorage.setItem('currentUser', 'null')
     router.push('/')
   }
 

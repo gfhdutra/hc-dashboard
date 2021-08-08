@@ -20,14 +20,17 @@ export default function Produtos() {
 
 const Container = styled.div`
   min-height: 100vh;
-  display: flex;
+  display: grid;
+  grid-template-columns: 16rem auto;
+  @media (max-width: 600px) {
+    grid-template-columns: 4.5rem auto;
+  }
 `
 const Main = styled.main`
-  width: 100%;
   padding: 0 1rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
   background-color: #f7f8fc;
