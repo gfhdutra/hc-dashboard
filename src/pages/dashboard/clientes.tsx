@@ -29,6 +29,8 @@ const Container = styled.div`
   width: 100vw;
   max-width: 100%;
   min-height: 100vh;
+  overflow-anchor: none;
+  overflow-x: hidden;
   display: grid;
   grid-template-columns: 16rem auto;
   @media (max-width: 600px) {
@@ -37,13 +39,14 @@ const Container = styled.div`
 `
 const Main = styled.main`
   width: calc(100vw - 16rem);
-  max-width: 98%;
-  /* padding: 0 1rem; */
+  max-width: 100%;
+  padding: 0 1rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   text-align: center;
+  /* background-color: #4d5268; */
   background-color: #f7f8fc;
   @media (max-width: 600px) {
     width: calc(100vw - 4.5rem);

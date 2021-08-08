@@ -28,6 +28,7 @@ export default function Home() {
 
 const Container = styled.div`
   min-height: 100vh;
+  overflow-anchor: none;
   display: flex;
   flex-direction: column;
   justify-content: center;

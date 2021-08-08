@@ -45,6 +45,7 @@ export default function Dashboard() {
 
 const Container = styled.div`
   min-height: 100vh;
+  overflow-anchor: none;
   display: grid;
   grid-template-columns: 16rem auto;
   @media (max-width: 600px) {

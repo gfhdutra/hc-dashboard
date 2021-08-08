@@ -8,6 +8,7 @@ type NewClientError = {
 }
 
 export default function ClientForm() {
+
   const {
     name,
     cpf,
@@ -22,6 +23,7 @@ export default function ClientForm() {
     setPhone,
     setAdress,
     handleModifyClientsList,
+    clearForm
   } = useClient()
 
   return (
@@ -47,7 +49,9 @@ export default function ClientForm() {
             id="cpf"
             placeholder="123.456.789-10"
             format="###.###.###-##"
+            pattern="\d{3}\.?\d{3}\.?\d{3}-?\d{2}"
             mask="_"
+            required
             value={cpf}
             onChange={(e: ChangeEvent<HTMLFormElement>) => setCpf(e.target.value)}
           />
@@ -71,7 +75,9 @@ export default function ClientForm() {
             id="phone"
             placeholder="+55 (11) 9988-7766"
             format="+## (##) ####-####"
+            pattern="[+][0-9]{2} [(][0-9]{2}[)] [\s/0-9]{4}[-][0-9]{4}"
             mask="_"
+            required
             value={phone}
             onChange={(e: ChangeEvent<HTMLFormElement>) => setPhone(e.target.value)}
           />
@@ -89,7 +95,8 @@ export default function ClientForm() {
         </InputFieldDivAdress>
 
         {/* <ErrorMsg newClientError={newClientError}>{msgErro}</ErrorMsg> */}
-        <Button>Cadastrar</Button>
+        <SubmitButton onSubmit={handleModifyClientsList}>Cadastrar</SubmitButton>
+        <ClearButton onClick={clearForm}>Limpar campos</ClearButton>
       </StyledClientForm>
     </FormDiv>
   )
@@ -141,8 +148,8 @@ const ErrorMsg = styled.span`
   font-size: 1.1rem;
   visibility: ${(props: NewClientError) => props.newClientError ? 'visible' : 'hidden'};
 `
-const Button = styled.button`
-  grid-column: 1 / 3;
+const SubmitButton = styled.button`
+  /* grid-column: 1 / 3; */
   margin: auto;
   width: 8rem;
   height: 2.5rem;
@@ -156,4 +163,8 @@ const Button = styled.button`
   cursor: pointer;
   background-color: #741cc7;
 }
+`
+const ClearButton = styled(SubmitButton)`
+  width: 10rem;
+  background-color: #2bdb89;
 `
