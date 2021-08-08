@@ -1,11 +1,12 @@
 import {
-  createContext,
   useState,
   ReactNode,
-  useContext,
   FormEvent,
   useEffect,
+  useCallback,
+  useMemo,
 } from 'react'
+import { createContext, useContextSelector } from 'use-context-selector'
 import Swal from 'sweetalert2'
 
 
@@ -74,7 +75,9 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
   const [updateClient, setUpdateClient] = useState(false)
   const [updateTable, setUpdateTable] = useState(false)
   const [msgErro, setMsgErro] = useState('Ocorreu um erro')
-  const currentClient: ClientData = {id, name, cpf, email, phone, adress}
+
+  const currentClient: ClientData = useMemo(() => {
+    return {id, name, cpf, email, phone, adress}},[adress, cpf, email, id, name, phone])
 
   useEffect(() => {
     const clientsDataListString = localStorage.getItem('clientsDataList')
@@ -87,14 +90,14 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
         setId(currentId)
       }
     }
-  }, [clientsDataList.length, currentId, updateClient, updateTable])
+  }, [clientsDataList.length ,currentId, updateClient])
 
 
-  function sortClientsList(a: ClientData, b: ClientData) {
+  const sortClientsList = useCallback((a: ClientData, b: ClientData) => {
     return a.id - b.id;
-  }
+  }, [])
 
-  function createClient(currentClient: ClientData): ClientData {
+  const createClient = useCallback((currentClient: ClientData): ClientData => {
     return {
       id: currentClient.id,
       name: currentClient.name,
@@ -103,24 +106,17 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
       phone: currentClient.phone,
       adress: currentClient.adress,
     }
-  }
+  }, [])
 
-  function clearForm() {
+  const clearForm = useCallback(() => {
     setName('')
     setCpf('')
     setEmail('')
     setPhone('')
     setAdress('')
-  }
+  }, [])
 
-  function setClientId(newId: number) {
-    setCurrentId(newId)
-    editClientForm(newId)
-    setUpdateClient(true)
-    window.scrollTo({top: 0, behavior: 'smooth'})
-  }
-
-  function editClientForm(id: number) {
+  const editClientForm = useCallback((id: number) => {
     clientsDataList.map((client: ClientData) => {
       if (id === client.id) {
         setName(client.name)
@@ -130,9 +126,16 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
         setAdress(client.adress)
       }
     })
-  }
+  }, [clientsDataList])
 
-  function verifyNewClient() {
+  const setClientId = useCallback((newId: number) => {
+    setCurrentId(newId)
+    editClientForm(newId)
+    setUpdateClient(true)
+    window.scrollTo({top: 0, behavior: 'smooth'})
+  }, [editClientForm])
+
+  const verifyNewClient = useCallback(() => {
     clientsDataList.map((client: ClientData) => {
       if (phone === client.phone) {
         setMsgErro('Telefone já cadastrado')
@@ -147,9 +150,20 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
         setNewClientError(true)
       }
     })
-  }
+  }, [clientsDataList, cpf, email, phone])
 
-  function deleteConfirmation(id: number) {
+  const removeClient = useCallback((id: number) => {
+    clientsDataList.map((client: ClientData) => {
+      if (client.id === id) {
+          let index = clientsDataList.indexOf(client)
+          clientsDataList.splice(index, 1)
+          localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList))
+      }})
+    setUpdateTable(!updateTable)
+    localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList.sort(sortClientsList)))
+  }, [clientsDataList, sortClientsList, updateTable])
+
+  const deleteConfirmation = useCallback((id: number) => {
     Swal.fire({
       title: 'Excluir cadastro?',
       text: "Esta ação é irreversível!",
@@ -169,20 +183,9 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
         )
       }
     })
-  }
+  }, [removeClient])
 
-  function removeClient(id: number) {
-    clientsDataList.map((client: ClientData) => {
-      if (client.id === id) {
-          let index = clientsDataList.indexOf(client)
-          clientsDataList.splice(index, 1)
-          localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList))
-      }})
-    setUpdateTable(!updateTable)
-    localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList.sort(sortClientsList)))
-  }
-
-  function handleModifyClientsList(e: FormEvent) {
+  const handleModifyClientsList = useCallback((e: FormEvent) => {
     e.preventDefault()
     setNewClientError(false)
     setMsgErro('Ocorreu um erro')
@@ -198,7 +201,7 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
     }
     setUpdateClient(false)
     localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList.sort(sortClientsList)))
-  }
+  }, [clearForm, clientsDataList, createClient, currentClient, id, newClientError, removeClient, sortClientsList, updateClient])
 
 
   return (
@@ -244,6 +247,49 @@ export function ClientContextProvider({ children }: ClientContextProviderProps) 
   )
 }
 
-export const useClient = () => {
-  return useContext(ClientContext);
+export const useClientForm = () => {
+  const name = useContextSelector(ClientContext, client => client.name)
+  const cpf = useContextSelector(ClientContext, client => client.cpf)
+  const email = useContextSelector(ClientContext, client => client.email)
+  const phone = useContextSelector(ClientContext, client => client.phone)
+  const adress = useContextSelector(ClientContext, client => client.adress)
+  const newClientError = useContextSelector(ClientContext, client => client.newClientError)
+  const msgErro = useContextSelector(ClientContext, client => client.msgErro)
+  const setName = useContextSelector(ClientContext, client => client.setName)
+  const setCpf = useContextSelector(ClientContext, client => client.setCpf)
+  const setEmail = useContextSelector(ClientContext, client => client.setEmail)
+  const setPhone = useContextSelector(ClientContext, client => client.setPhone)
+  const setAdress = useContextSelector(ClientContext, client => client.setAdress)
+  const handleModifyClientsList = useContextSelector(ClientContext, client => client.handleModifyClientsList)
+  const clearForm = useContextSelector(ClientContext, client => client.clearForm)
+
+  return {
+    name,
+    cpf,
+    email,
+    phone,
+    adress,
+    newClientError,
+    msgErro,
+    setName,
+    setCpf,
+    setEmail,
+    setPhone,
+    setAdress,
+    handleModifyClientsList,
+    clearForm
+  }
+}
+
+
+export function useClientTable() {
+  const clientsDataList = useContextSelector(ClientContext, client => client.clientsDataList)
+  const setClientId = useContextSelector(ClientContext, client => client.setClientId)
+  const deleteConfirmation = useContextSelector(ClientContext, client => client.deleteConfirmation)
+
+  return {
+    clientsDataList,
+    setClientId,
+    deleteConfirmation
+  }
 }

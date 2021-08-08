@@ -1,8 +1,8 @@
-import { useClient } from "src/contexts/ClientContext"
+import { useClientTable } from "src/contexts/ClientContext"
 import styled from "styled-components"
 
 export default function ClientTable() {
-  const { clientsDataList, setClientId, deleteConfirmation } = useClient()
+  const { clientsDataList, setClientId, deleteConfirmation } = useClientTable()
 
   return (
     <Div>
@@ -31,10 +31,10 @@ export default function ClientTable() {
               <td>
                 <Actions>
                   <EditIcon onClick={() => { setClientId(client.id) }}
-                    style={{ backgroundImage: "url(/edit-2.svg)" }}>
+                    style={{ backgroundImage: "url(/edit.svg)" }}>
                   </EditIcon>
                   <TrashIcon onClick={() => { deleteConfirmation(client.id) }}
-                    style={{ backgroundImage: "url(/trash.svg)" }}>
+                    style={{ backgroundImage: "url(/delete-x.svg)" }}>
                   </TrashIcon>
                 </Actions>
               </td>
@@ -75,8 +75,8 @@ const Table = styled.table`
   }
   tbody td:not(:first-child) {
     min-width: 160px;
-    /* max-width: 200px; */
-    white-space: nowrap;
+    max-width: 200px;
+    /* white-space: nowrap; */
     text-overflow: ellipsis;
     word-break: break-all;
     overflow: hidden;
@@ -89,20 +89,23 @@ const Actions = styled.div`
 `
 const EditIcon = styled.div`
   margin: 0 .6rem;
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   box-sizing: border-box;
   background-size: cover;
   background-repeat: no-repeat;
+  /* #79a3ec */
   filter: invert(51%) sepia(83%) saturate(2028%) hue-rotate(199deg) brightness(105%) contrast(86%);
   &:hover{
     cursor: pointer;
-    filter: invert(38%) sepia(80%) saturate(2592%) hue-rotate(207deg) brightness(96%) contrast(94%);
+    filter: invert(30%) sepia(58%) saturate(6845%) hue-rotate(231deg) brightness(103%) contrast(101%);
   }
 `
 const TrashIcon = styled(EditIcon)`
-  filter: invert(51%) sepia(73%) saturate(6674%) hue-rotate(1deg) brightness(100%) contrast(106%);
+  /* #fc4d0e */
+  /* #ff0000 */
+  filter: invert(34%) sepia(56%) saturate(2625%) hue-rotate(355deg) brightness(100%) contrast(98%);
   &:hover{
-    filter: invert(27%) sepia(58%) saturate(5903%) hue-rotate(3deg) brightness(104%) contrast(102%);
+    filter: invert(21%) sepia(67%) saturate(7448%) hue-rotate(355deg) brightness(94%) contrast(119%);
   }
 `

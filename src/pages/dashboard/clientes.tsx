@@ -7,6 +7,7 @@ import ClientTable from 'src/components/ClientTable'
 
 
 export default function Clientes() {
+
   return (
     <ClientContextProvider>
       <Container>
@@ -30,7 +31,6 @@ const Container = styled.div`
   max-width: 100%;
   min-height: 100vh;
   overflow-anchor: none;
-  overflow-x: hidden;
   display: grid;
   grid-template-columns: 16rem auto;
   @media (max-width: 600px) {
@@ -38,15 +38,15 @@ const Container = styled.div`
   }
 `
 const Main = styled.main`
-  width: calc(100vw - 16rem);
+  /* width: calc(100vw - 16rem); */
   max-width: 100%;
+  min-width: 0;
   padding: 0 1rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   text-align: center;
-  /* background-color: #4d5268; */
   background-color: #f7f8fc;
   @media (max-width: 600px) {
     width: calc(100vw - 4.5rem);

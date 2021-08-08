@@ -1,5 +1,5 @@
 import { ChangeEvent } from 'react'
-import { useClient } from "src/contexts/ClientContext"
+import { useClientForm } from "src/contexts/ClientContext"
 import { default as NumberFormat } from 'react-number-format';
 import styled from "styled-components"
 
@@ -24,7 +24,7 @@ export default function ClientForm() {
     setAdress,
     handleModifyClientsList,
     clearForm
-  } = useClient()
+  } = useClientForm()
 
   return (
     <FormDiv>
@@ -154,17 +154,22 @@ const SubmitButton = styled.button`
   width: 8rem;
   height: 2.5rem;
   border: 0;
-  border-radius: 3px;
+  border-radius: .5rem;
   font-size: 1.1rem;
-  background-color: #862bdb;
+  background-color: #3751FF;
   color: #fff;
 
   &:hover {
   cursor: pointer;
-  background-color: #741cc7;
+  background-color: #273ed6;
 }
 `
 const ClearButton = styled(SubmitButton)`
   width: 10rem;
-  background-color: #2bdb89;
+  color: #fff;
+  background-color: #29CC97;
+
+  &:hover {
+  background-color: #14af7b;
+}
 `
