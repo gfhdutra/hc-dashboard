@@ -106,6 +106,9 @@ const FormDiv = styled.div`
   width: 90%;
   margin-top: 2rem;
   color: #363740;
+  @media(max-width: 500px) {
+    /* width: 100%; */
+  }
 `
 const StyledClientForm = styled.form`
   display: grid;
@@ -118,6 +121,9 @@ const InputFieldDiv = styled.div`
   align-items: flex-start;  
   label {
     padding: 0.1rem 0;
+  }
+  @media(max-width: 500px) {
+    grid-column: 1 / 3;
   }
 `
 const InputFieldDivAdress = styled(InputFieldDiv)`
@@ -156,20 +162,23 @@ const SubmitButton = styled.button`
   border: 0;
   border-radius: .5rem;
   font-size: 1.1rem;
-  background-color: #3751FF;
+  background-color: #5161cc;
   color: #fff;
 
   &:hover {
   cursor: pointer;
-  background-color: #273ed6;
-}
+  background-color: #4055db;
+  }
+  @media(max-width: 500px) {
+    grid-column: 1 / 3;
+  }
 `
 const ClearButton = styled(SubmitButton)`
   width: 10rem;
   color: #fff;
-  background-color: #29CC97;
+  background-color: #09aa8a;
 
   &:hover {
-  background-color: #14af7b;
+    background-color: #00a16b;
 }
 `

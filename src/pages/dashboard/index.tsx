@@ -59,7 +59,7 @@ const Main = styled.main`
   justify-content: center;
   align-items: center;
   text-align: center;
-  background-color: #f7f8fc;
+  background-color: #f7f7f7;
 `
 const Title = styled.h1`
   margin: 1rem 0; 

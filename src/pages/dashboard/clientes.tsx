@@ -47,7 +47,7 @@ const Main = styled.main`
   justify-content: flex-start;
   align-items: center;
   text-align: center;
-  background-color: #f7f8fc;
+  background-color: #f7f7f7;
   @media (max-width: 600px) {
     width: calc(100vw - 4.5rem);
   }

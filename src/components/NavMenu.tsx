@@ -140,6 +140,6 @@ const MenuItem = styled.div`
   }
 `
 const NavFooter = styled.div`
-  margin-top: auto;
-  margin-bottom: 3rem;
+  position: fixed;
+  bottom: 10%;
 `

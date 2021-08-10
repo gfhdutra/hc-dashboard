@@ -31,7 +31,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #f7f8fc;
+  background-color: #f7f7f7;
 `
 const Main = styled.main`
   flex: 1;
