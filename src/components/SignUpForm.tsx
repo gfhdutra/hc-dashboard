@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import { useRouter } from "next/dist/client/router"
 import Swal from 'sweetalert2'
 import styled from "styled-components"
+import axios from 'axios'
 
-type UserData = {
+
+interface UserData {
   email: string,
   user: string,
   password: string
 }
 
-type SignUpError = {
+interface SignUpError {
   signUpError: boolean,
 }
 let signUpError: boolean = false
@@ -74,19 +76,26 @@ export default function SignUpForm() {
     })
   }
 
-  function handleSignUp(e: any) {
+  function handleSignUp(e: FormEvent) {
     e.preventDefault()
     setError(false)
     setErrorMsg('Ocorreu um erro')
     verifySignUp()
-    if (!signUpError) {
-      usersData.push(createUser(email, user, password))
-      localStorage.setItem('usersData', JSON.stringify(usersData))
-      setAlertMsg(true)
-      setEmail('')
-      setUser('')
-      setPassword('')
-    }
+    axios.post('/api/notion', createUser(email, user, password))
+    .then(() => {
+      return console.log('Thank you for contacting us!', createUser(email, user, password));
+    })
+    .catch((e) => {
+      return console.log('Something bad happened', e.message);
+    })
+    // if (!signUpError) {
+    //   usersData.push(createUser(email, user, password))
+    //   localStorage.setItem('usersData', JSON.stringify(usersData))
+    //   setAlertMsg(true)
+    //   setEmail('')
+    //   setUser('')
+    //   setPassword('')
+    // }
   }
 
   if (alertMsg) {
