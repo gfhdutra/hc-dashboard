@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Client } from '@notionhq/client'
+import CryptoJS from 'crypto-js'
+
 
 interface UserData {
   user: string,
@@ -8,8 +10,14 @@ interface UserData {
 }
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY })
-
 export default async function getUsers(req: NextApiRequest, res: NextApiResponse) {
+
+  function encrypt(word: any, key: any) {
+    let encJson = CryptoJS.AES.encrypt(JSON.stringify(word), key).toString()
+    let encData = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(encJson))
+    return encData
+  }
+
   await notion.databases.query({ database_id: process.env.NOTION_DATABASE_ID || '' })
     .then(response => {
       const userList: UserData[] = []
@@ -19,7 +27,8 @@ export default async function getUsers(req: NextApiRequest, res: NextApiResponse
         let password = result.properties.password.rich_text[0].plain_text
         userList.push({ user, email, password })
       })
-      res.status(201).json({userList})
+      let encryptext = encrypt(userList, process.env.DECRYPT_KEY)
+      res.status(201).json({ encryptext })
     })
     .catch(error => {
       console.log(error)

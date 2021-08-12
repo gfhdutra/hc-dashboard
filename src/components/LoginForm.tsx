@@ -2,7 +2,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 import { useRouter } from "next/dist/client/router"
 import axios from "axios"
 import styled from "styled-components"
-
+import CryptoJS from 'crypto-js'
 
 interface UserData {
   user: string,
@@ -24,10 +24,18 @@ export default function LoginForm() {
   const [usersData, setUsersData] = useState<UserData[]>([])
   const [currentUser, setCurrentUser] = useState<CurrentUser>(userInitialState)
 
+  function decrypt(word: string, key: any) {
+    let decData = CryptoJS.enc.Base64.parse(word).toString(CryptoJS.enc.Utf8)
+    let bytes = CryptoJS.AES.decrypt(decData, key).toString(CryptoJS.enc.Utf8)
+    return JSON.parse(bytes)
+  }
+
   useEffect(() => {
     axios.get('/api/getUsers')
       .then(response => {
-        setUsersData(response.data.userList)
+        let apiRes = response.data.encryptext
+        let decryptedData = decrypt(apiRes, process.env.DECRYPT_KEY)
+        setUsersData(decryptedData)
       })
       .catch(error => {
         console.log(error)
