@@ -1,29 +1,29 @@
-import { FormEvent, useEffect, useState } from "react"
+import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 import { useRouter } from "next/dist/client/router"
+import axios from 'axios'
 import Swal from 'sweetalert2'
 import styled from "styled-components"
-import axios from 'axios'
 
 
 interface UserData {
-  email: string,
   user: string,
+  email: string,
   password: string
 }
 
 interface SignUpError {
   signUpError: boolean,
 }
+
 let signUpError: boolean = false
 
 export default function SignUpForm() {
-  const [email, setEmail] = useState('')
-  const [user, setUser] = useState('')
-  const [password, setPassword] = useState('')
-  const [usersData, setUsersData] = useState<UserData[]>([])
-  const [errorMsg, setErrorMsg] = useState('Ocorreu um erro')
-  const [alertMsg, setAlertMsg] = useState(false);
   const router = useRouter()
+  const userInitialState = {user: '', email: '', password: ''}
+  const [alertMsg, setAlertMsg] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('Ocorreu um erro')
+  const [usersData, setUsersData] = useState<UserData[]>([])
+  const [currentUser, setCurrentUser] = useState<UserData>(userInitialState)
 
   const Toast = Swal.mixin({
     toast: true,
@@ -41,23 +41,14 @@ export default function SignUpForm() {
   })
 
   useEffect(() => {
-    let usersDataString = localStorage.getItem('usersData')
-    if (usersDataString !== null) {
-      setUsersData(JSON.parse(usersDataString))
-    }
+    axios.get('/api/getUsers')
+      .then(response => {
+        setUsersData(response.data.userList)
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }, [])
-
-  function createUser(
-    email: string,
-    usuario: string,
-    senha: string
-  ): UserData {
-    return {
-      email: email,
-      user: usuario,
-      password: senha
-    }
-  }
 
   function setError(bool: boolean) {
     return signUpError = bool
@@ -65,15 +56,19 @@ export default function SignUpForm() {
 
   function verifySignUp() {
     usersData.map((users: UserData) => {
-      if (email == users.email) {
+      if (currentUser.email == users.email) {
         setErrorMsg('Email já cadastrado')
         setError(true)
       }
-      if (user == users.user) {
+      if (currentUser.user == users.user) {
         setErrorMsg('Usuário já cadastrado')
         setError(true)
       }
     })
+  }
+
+  function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    setCurrentUser(prevState => ({ ...prevState, [e.target.id]: e.target.value }))
   }
 
   function handleSignUp(e: FormEvent) {
@@ -81,21 +76,16 @@ export default function SignUpForm() {
     setError(false)
     setErrorMsg('Ocorreu um erro')
     verifySignUp()
-    axios.post('/api/notion', createUser(email, user, password))
-    .then(() => {
-      return console.log('Thank you for contacting us!', createUser(email, user, password));
-    })
-    .catch((e) => {
-      return console.log('Something bad happened', e.message);
-    })
-    // if (!signUpError) {
-    //   usersData.push(createUser(email, user, password))
-    //   localStorage.setItem('usersData', JSON.stringify(usersData))
-    //   setAlertMsg(true)
-    //   setEmail('')
-    //   setUser('')
-    //   setPassword('')
-    // }
+    if (!signUpError) {
+      axios.post('/api/setUsers', currentUser)
+        .then(() => {
+          setAlertMsg(true)
+          setCurrentUser(userInitialState)
+        })
+        .catch(e => {
+          console.log('Some error happened: ', e.message)
+        })
+    }
   }
 
   if (alertMsg) {
@@ -114,8 +104,8 @@ export default function SignUpForm() {
           type="email"
           id="email"
           placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={currentUser.email}
+          onChange={handleChange}
           required
         />
       </InputFieldDiv>
@@ -125,8 +115,8 @@ export default function SignUpForm() {
           type="text"
           id="user"
           placeholder="Usuário"
-          value={user}
-          onChange={(e) => setUser(e.target.value)}
+          value={currentUser.user}
+          onChange={handleChange}
           required
         />
       </InputFieldDiv>
@@ -136,8 +126,8 @@ export default function SignUpForm() {
           type="password"
           id="password"
           placeholder="Senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={currentUser.password}
+          onChange={handleChange}
           required
         />
       </InputFieldDiv>

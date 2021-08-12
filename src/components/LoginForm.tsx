@@ -1,47 +1,61 @@
-import { useEffect, useState } from "react"
+import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 import { useRouter } from "next/dist/client/router"
+import axios from "axios"
 import styled from "styled-components"
 
-type LoginError = {
+
+interface UserData {
+  user: string,
+  email: string,
+  password: string
+}
+interface CurrentUser {
+  user: string,
+  password: string
+}
+interface LoginError {
   loginError: boolean,
 }
-
 export default function LoginForm() {
-  const [user, setUser] = useState('')
-  const [password, setPassword] = useState('')
-  const [loginError, setLoginError] = useState(false)
-  const [usersData, setUsersData] = useState([])
-  const [errorMsg, setErrorMsg] = useState('Ocorreu um erro')
   const router = useRouter()
+  const userInitialState = { user: '', password: '' }
+  const [loginError, setLoginError] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('Ocorreu um erro')
+  const [usersData, setUsersData] = useState<UserData[]>([])
+  const [currentUser, setCurrentUser] = useState<CurrentUser>(userInitialState)
 
   useEffect(() => {
-    let usersDataString = localStorage.getItem('usersData')
-    if (usersDataString !== null) {
-      setUsersData(JSON.parse(usersDataString))
-    }
+    axios.get('/api/getUsers')
+      .then(response => {
+        setUsersData(response.data.userList)
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }, [])
 
+
   function verifyLogin() {
-    if (localStorage.getItem('usersData') !== null) {
-      usersData.map((users: any) => {
-        if (user == users.user && password == users.password) {
-          localStorage.setItem('currentUser', user)
-          setLoginError(false)
-          router.push('/dashboard')
-        }
-        else if (user == users.user && password != users.password) {
-          setErrorMsg('Senha incorreta')
-        }
-        else if (user != users.user && password == users.password) {
-          setErrorMsg('Usuário incorreto')
-        }
-      })
-    } else {
-      setErrorMsg('Nenhum usuário cadastrado')
-    }
+    usersData.map((users: UserData) => {
+      if (currentUser.user == users.user && currentUser.password == users.password) {
+        localStorage.setItem('currentUser', currentUser.user)
+        setLoginError(false)
+        router.push('/dashboard')
+      }
+      else if (currentUser.user == users.user && currentUser.password != users.password) {
+        setErrorMsg('Senha incorreta')
+      }
+      else if (currentUser.user != users.user && currentUser.password == users.password) {
+        setErrorMsg('Usuário incorreto')
+      }
+    })
   }
 
-  function handleLogin(e: any) {
+  function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    setCurrentUser(prevState => ({ ...prevState, [e.target.id]: e.target.value }))
+  }
+
+  function handleLogin(e: FormEvent) {
     e.preventDefault()
     setLoginError(true)
     setErrorMsg('Usuário ou senha incorretos')
@@ -56,8 +70,8 @@ export default function LoginForm() {
           type="text"
           id="user"
           placeholder="Usuário"
-          value={user}
-          onChange={(e) => setUser(e.target.value)}
+          value={currentUser.user}
+          onChange={handleChange}
           required
         />
       </InputFieldDiv>
@@ -67,8 +81,8 @@ export default function LoginForm() {
           type="password"
           id="password"
           placeholder="Senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={currentUser.password}
+          onChange={handleChange}
           required
         />
       </InputFieldDiv>
