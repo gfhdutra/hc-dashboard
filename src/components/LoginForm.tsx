@@ -1,30 +1,21 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 import { useRouter } from "next/dist/client/router"
 import axios from "axios"
-import styled from "styled-components"
 import CryptoJS from 'crypto-js'
+import { UserData, CurrentUser, LoginError } from 'src/interfaces'
+import styled from "styled-components"
 
-interface UserData {
-  user: string,
-  email: string,
-  password: string
-}
-interface CurrentUser {
-  user: string,
-  password: string
-}
-interface LoginError {
-  loginError: boolean,
-}
+
 export default function LoginForm() {
   const router = useRouter()
-  const userInitialState = { user: '', password: '' }
+  const userInitialState = { id: '', user: '', email: '', password: '', active: false }
   const [loginError, setLoginError] = useState(false)
   const [errorMsg, setErrorMsg] = useState('Ocorreu um erro')
   const [usersData, setUsersData] = useState<UserData[]>([])
-  const [currentUser, setCurrentUser] = useState<CurrentUser>(userInitialState)
+  const [currentUser, setCurrentUser] = useState<UserData>(userInitialState)
 
-  function decrypt(word: string, key: any) {
+
+  function decrypt(word: string, key: string) {
     let decData = CryptoJS.enc.Base64.parse(word).toString(CryptoJS.enc.Utf8)
     let bytes = CryptoJS.AES.decrypt(decData, key).toString(CryptoJS.enc.Utf8)
     return JSON.parse(bytes)
@@ -46,9 +37,15 @@ export default function LoginForm() {
   function verifyLogin() {
     usersData.map((users: UserData) => {
       if (currentUser.user == users.user && currentUser.password == users.password) {
-        localStorage.setItem('currentUser', currentUser.user)
         setLoginError(false)
-        router.push('/dashboard')
+        axios.patch('/api/updateUsers', { id: users.id, active: true })
+          .then(() => {
+            localStorage.setItem('currentUser', currentUser.user)
+            router.push('/dashboard')
+          })
+          .catch(error => {
+            console.log('Error happened: ', error.message)
+          })
       }
       else if (currentUser.user == users.user && currentUser.password != users.password) {
         setErrorMsg('Senha incorreta')

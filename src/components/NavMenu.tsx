@@ -1,19 +1,60 @@
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import CryptoJS from 'crypto-js'
+import axios from 'axios'
+import { Route, UserData } from 'src/interfaces'
 import styled from 'styled-components'
 
-type Route = {
-  route: string,
-  currentRoute: string,
-}
 
 export default function NavMenu() {
   const router = useRouter()
+  const [userName, setUserName] = useState('')
+  const [usersData, setUsersData] = useState<UserData[]>([])
   let currentRoute = router.pathname
 
+  function decrypt(word: string, key: string) {
+    let decData = CryptoJS.enc.Base64.parse(word).toString(CryptoJS.enc.Utf8)
+    let bytes = CryptoJS.AES.decrypt(decData, key).toString(CryptoJS.enc.Utf8)
+    return JSON.parse(bytes)
+  }
+
+  useEffect(() => {
+    axios.get('/api/getUsers')
+      .then(response => {
+        let apiRes = response.data.encryptext
+        let decryptedData = decrypt(apiRes, process.env.DECRYPT_KEY)
+        setUsersData(decryptedData)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }, [])
+
+  useEffect(() => {
+    let currentUser: any = localStorage.getItem('currentUser')
+    if (currentUser === 'null') {
+      router.push('/')
+    }
+    else if (currentUser !== null || currentUser !== 'null') {
+      setUserName(currentUser)
+    }
+  }, [router])
+
+
   function handleLogout() {
-    localStorage.setItem('currentUser', 'null')
-    router.push('/')
+    usersData.map((users: UserData) => {
+      if (userName == users.user) {
+        axios.patch('/api/updateUsers', { id: users.id, active: false })
+          .then(() => {
+            localStorage.setItem('currentUser', 'null')
+            router.push('/')
+          })
+          .catch(error => {
+            console.log('Error happened: ', error.message)
+          })
+      }
+    })
   }
 
   return (
@@ -109,9 +150,10 @@ const MenuIcon = styled.div`
 `
 const MenuItem = styled.div`
   ${(props: Route) => props.route == props.currentRoute && {
-  color: '#DD22F', 
-  backgroundColor: '#3f4049', 
-  borderLeft: '3px solid #DDE2FF'}} 
+    color: '#DD22F',
+    backgroundColor: '#3f4049',
+    borderLeft: '3px solid #DDE2FF'
+  }} 
   width: 16rem;
   height: 3.5rem;
   display: flex;

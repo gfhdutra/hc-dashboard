@@ -1,11 +1,9 @@
 import { ChangeEvent } from 'react'
 import { useClientForm } from "src/contexts/ClientContext"
 import { default as NumberFormat } from 'react-number-format';
+import { NewClientError } from 'src/interfaces'
 import styled from "styled-components"
 
-type NewClientError = {
-  newClientError: boolean,
-}
 
 export default function ClientForm() {
 

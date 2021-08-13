@@ -4,23 +4,41 @@ import Head from 'next/head'
 import NavMenu from '../../components/NavMenu'
 import styled from 'styled-components'
 import RedirectUser from 'src/components/RedirectUser'
+import { UserData } from 'src/interfaces'
+import axios from 'axios'
+import CryptoJS from 'crypto-js'
 
 
 export default function Dashboard() {
   const router = useRouter()
   const [userName, setUserName] = useState('')
+  const [usersData, setUsersData] = useState<UserData[]>([])
   const [validUser, setValidUser] = useState(false)
+
+  function decrypt(word: string, key: string) {
+    let decData = CryptoJS.enc.Base64.parse(word).toString(CryptoJS.enc.Utf8)
+    let bytes = CryptoJS.AES.decrypt(decData, key).toString(CryptoJS.enc.Utf8)
+    return JSON.parse(bytes)
+  }
+
+  useEffect(() => {
+    axios.get('/api/getUsers')
+      .then(response => {
+        let apiRes = response.data.encryptext
+        let decryptedData = decrypt(apiRes, process.env.DECRYPT_KEY)
+        setUsersData(decryptedData)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }, [])
 
   useEffect(() => {
     let currentUser: any = localStorage.getItem('currentUser')
     if (currentUser === 'null') {
-      setValidUser(false)
-      // setTimeout(()=> {
-      //   router.push('/')
-      // }, 2000)
+      router.push('/')
     }
     else if (currentUser !== null || currentUser !== 'null') {
-      setValidUser(true)
       setUserName(currentUser)
     }
   }, [router])
@@ -42,6 +60,7 @@ export default function Dashboard() {
     </Container>
   )
 }
+
 
 const Container = styled.div`
   min-height: 100vh;

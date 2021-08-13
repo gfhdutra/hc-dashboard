@@ -1,23 +1,16 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 import { useRouter } from "next/dist/client/router"
 import axios from 'axios'
+import CryptoJS from 'crypto-js'
+import { UserData, SignUpError } from 'src/interfaces'
 import Swal from 'sweetalert2'
 import styled from "styled-components"
-import CryptoJS from 'crypto-js'
 
-interface UserData {
-  user: string,
-  email: string,
-  password: string
-}
-interface SignUpError {
-  signUpError: boolean,
-}
+
 let signUpError: boolean = false
-
 export default function SignUpForm() {
   const router = useRouter()
-  const userInitialState = {user: '', email: '', password: ''}
+  const userInitialState = { id: '', user: '', email: '', password: '', active: false }
   const [alertMsg, setAlertMsg] = useState(false)
   const [errorMsg, setErrorMsg] = useState('Ocorreu um erro')
   const [usersData, setUsersData] = useState<UserData[]>([])
@@ -38,7 +31,7 @@ export default function SignUpForm() {
     }
   })
 
-  function decrypt(word: string, key: any) {
+  function decrypt(word: string, key: string) {
     let decData = CryptoJS.enc.Base64.parse(word).toString(CryptoJS.enc.Utf8)
     let bytes = CryptoJS.AES.decrypt(decData, key).toString(CryptoJS.enc.Utf8)
     return JSON.parse(bytes)
@@ -56,19 +49,19 @@ export default function SignUpForm() {
       })
   }, [])
 
-  function setError(bool: boolean) {
+  function setSignUpError(bool: boolean) {
     return signUpError = bool
   }
 
   function verifySignUp() {
     usersData.map((users: UserData) => {
       if (currentUser.email == users.email) {
+        setSignUpError(true)
         setErrorMsg('Email já cadastrado')
-        setError(true)
       }
       if (currentUser.user == users.user) {
+        setSignUpError(true)
         setErrorMsg('Usuário já cadastrado')
-        setError(true)
       }
     })
   }
@@ -79,7 +72,7 @@ export default function SignUpForm() {
 
   function handleSignUp(e: FormEvent) {
     e.preventDefault()
-    setError(false)
+    setSignUpError(false)
     setErrorMsg('Ocorreu um erro')
     verifySignUp()
     if (!signUpError) {
@@ -88,8 +81,8 @@ export default function SignUpForm() {
           setAlertMsg(true)
           setCurrentUser(userInitialState)
         })
-        .catch(e => {
-          console.log('Some error happened: ', e.message)
+        .catch(error => {
+          console.log('Error happened: ', error.message)
         })
     }
   }

@@ -10,7 +10,7 @@ import { createContext, useContextSelector } from 'use-context-selector'
 import Swal from 'sweetalert2'
 
 
-type ClientData = {
+interface ClientData {
   id: number,
   name: string,
   cpf: string,
@@ -19,7 +19,7 @@ type ClientData = {
   adress: string,
 }
 
-type ClientContextData = {
+interface ClientContextData {
   clientsDataList: ClientData[],
   id: number,
   currentId: number,

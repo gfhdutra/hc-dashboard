@@ -1,13 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Client } from '@notionhq/client'
 import CryptoJS from 'crypto-js'
+import { UserData } from 'src/interfaces'
 
-
-interface UserData {
-  user: string,
-  email: string,
-  password: string
-}
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY })
 export default async function getUsers(req: NextApiRequest, res: NextApiResponse) {
@@ -22,10 +17,12 @@ export default async function getUsers(req: NextApiRequest, res: NextApiResponse
     .then(response => {
       const userList: UserData[] = []
       response.results.map((result: any) => {
+        let id = result.id
         let user = result.properties.user.title[0].plain_text
         let email = result.properties.email.email
         let password = result.properties.password.rich_text[0].plain_text
-        userList.push({ user, email, password })
+        let active = result.properties.active.checkbox
+        userList.push({ id, user, email, password, active })
       })
       let encryptext = encrypt(userList, process.env.DECRYPT_KEY)
       res.status(201).json({ encryptext })

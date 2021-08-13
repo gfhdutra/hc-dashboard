@@ -1,9 +1,9 @@
 import { useClientTable } from "src/contexts/ClientContext"
 import styled from "styled-components"
 
+
 export default function ClientTable() {
   const { clientsDataList, setClientId, deleteConfirmation } = useClientTable()
-
   return (
     <Div>
     <Table>
