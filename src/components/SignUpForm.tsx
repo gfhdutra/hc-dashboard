@@ -1,91 +1,26 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react"
-import { useRouter } from "next/dist/client/router"
-import axios from 'axios'
-import CryptoJS from 'crypto-js'
-import { UserData, SignUpError } from 'src/interfaces'
-import Swal from 'sweetalert2'
+import { useEffect } from "react"
+import { useSignUpForm } from "src/contexts/UserContext"
+import { SignUpError } from 'src/interfaces'
 import styled from "styled-components"
 
 
-let signUpError: boolean = false
 export default function SignUpForm() {
-  const router = useRouter()
-  const userInitialState = { id: '', user: '', email: '', password: '', active: false }
-  const [alertMsg, setAlertMsg] = useState(false)
-  const [errorMsg, setErrorMsg] = useState('Ocorreu um erro')
-  const [usersData, setUsersData] = useState<UserData[]>([])
-  const [currentUser, setCurrentUser] = useState<UserData>(userInitialState)
-
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 2000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    },
-    willClose: () => {
-      router.push('/')
-    }
-  })
-
-  function decrypt(word: string, key: string) {
-    let decData = CryptoJS.enc.Base64.parse(word).toString(CryptoJS.enc.Utf8)
-    let bytes = CryptoJS.AES.decrypt(decData, key).toString(CryptoJS.enc.Utf8)
-    return JSON.parse(bytes)
-  }
+  const {
+    email,
+    user,
+    password,
+    signUpError,
+    signUpErrorMsg,
+    handleChange,
+    handleSignUp,
+    alertMsg,
+    Toast,
+    setCurrentUser
+  } = useSignUpForm()
 
   useEffect(() => {
-    axios.get('/api/getUsers')
-      .then(response => {
-        let apiRes = response.data.encryptext
-        let decryptedData = decrypt(apiRes, process.env.DECRYPT_KEY)
-        setUsersData(decryptedData)
-      })
-      .catch(error => {
-        console.log(error)
-      })
-  }, [])
-
-  function setSignUpError(bool: boolean) {
-    return signUpError = bool
-  }
-
-  function verifySignUp() {
-    usersData.map((users: UserData) => {
-      if (currentUser.email == users.email) {
-        setSignUpError(true)
-        setErrorMsg('Email já cadastrado')
-      }
-      if (currentUser.user == users.user) {
-        setSignUpError(true)
-        setErrorMsg('Usuário já cadastrado')
-      }
-    })
-  }
-
-  function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setCurrentUser(prevState => ({ ...prevState, [e.target.id]: e.target.value }))
-  }
-
-  function handleSignUp(e: FormEvent) {
-    e.preventDefault()
-    setSignUpError(false)
-    setErrorMsg('Ocorreu um erro')
-    verifySignUp()
-    if (!signUpError) {
-      axios.post('/api/setUsers', currentUser)
-        .then(() => {
-          setAlertMsg(true)
-          setCurrentUser(userInitialState)
-        })
-        .catch(error => {
-          console.log('Error happened: ', error.message)
-        })
-    }
-  }
+    setCurrentUser({id: '', user: '', email: '', password: '', active: false })
+  }, [setCurrentUser])
 
   if (alertMsg) {
     Toast.fire({
@@ -103,7 +38,7 @@ export default function SignUpForm() {
           type="email"
           id="email"
           placeholder="E-mail"
-          value={currentUser.email}
+          value={email}
           onChange={handleChange}
           required
         />
@@ -114,7 +49,7 @@ export default function SignUpForm() {
           type="text"
           id="user"
           placeholder="Usuário"
-          value={currentUser.user}
+          value={user}
           onChange={handleChange}
           required
         />
@@ -125,13 +60,13 @@ export default function SignUpForm() {
           type="password"
           id="password"
           placeholder="Senha"
-          value={currentUser.password}
+          value={password}
           onChange={handleChange}
           required
         />
       </InputFieldDiv>
 
-      <ErrorMsg signUpError={signUpError}>{errorMsg}</ErrorMsg>
+      <ErrorMsg signUpError={signUpError}>{signUpErrorMsg}</ErrorMsg>
       <Button>Cadastrar</Button>
     </StyledSignUpForm>
   )

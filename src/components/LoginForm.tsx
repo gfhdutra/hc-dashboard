@@ -1,71 +1,23 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react"
-import { useRouter } from "next/dist/client/router"
-import axios from "axios"
-import CryptoJS from 'crypto-js'
-import { UserData, CurrentUser, LoginError } from 'src/interfaces'
+import { LoginError } from 'src/interfaces'
+import { useLoginForm } from "src/contexts/UserContext"
 import styled from "styled-components"
+import { useEffect } from 'react'
 
 
 export default function LoginForm() {
-  const router = useRouter()
-  const userInitialState = { id: '', user: '', email: '', password: '', active: false }
-  const [loginError, setLoginError] = useState(false)
-  const [errorMsg, setErrorMsg] = useState('Ocorreu um erro')
-  const [usersData, setUsersData] = useState<UserData[]>([])
-  const [currentUser, setCurrentUser] = useState<UserData>(userInitialState)
-
-
-  function decrypt(word: string, key: string) {
-    let decData = CryptoJS.enc.Base64.parse(word).toString(CryptoJS.enc.Utf8)
-    let bytes = CryptoJS.AES.decrypt(decData, key).toString(CryptoJS.enc.Utf8)
-    return JSON.parse(bytes)
-  }
+  const {
+    user,
+    password,
+    loginError,
+    loginErrorMsg,
+    handleChange,
+    handleLogin,
+    setCurrentUser
+  } = useLoginForm()
 
   useEffect(() => {
-    axios.get('/api/getUsers')
-      .then(response => {
-        let apiRes = response.data.encryptext
-        let decryptedData = decrypt(apiRes, process.env.DECRYPT_KEY)
-        setUsersData(decryptedData)
-      })
-      .catch(error => {
-        console.log(error)
-      })
-  }, [])
-
-
-  function verifyLogin() {
-    usersData.map((users: UserData) => {
-      if (currentUser.user == users.user && currentUser.password == users.password) {
-        setLoginError(false)
-        axios.patch('/api/updateUsers', { id: users.id, active: true })
-          .then(() => {
-            localStorage.setItem('currentUser', currentUser.user)
-            router.push('/dashboard')
-          })
-          .catch(error => {
-            console.log('Error happened: ', error.message)
-          })
-      }
-      else if (currentUser.user == users.user && currentUser.password != users.password) {
-        setErrorMsg('Senha incorreta')
-      }
-      else if (currentUser.user != users.user && currentUser.password == users.password) {
-        setErrorMsg('Usuário incorreto')
-      }
-    })
-  }
-
-  function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setCurrentUser(prevState => ({ ...prevState, [e.target.id]: e.target.value }))
-  }
-
-  function handleLogin(e: FormEvent) {
-    e.preventDefault()
-    setLoginError(true)
-    setErrorMsg('Usuário ou senha incorretos')
-    verifyLogin()
-  }
+    setCurrentUser({ id: '', user: '', email: '', password: '', active: false })
+  },[setCurrentUser])
 
   return (
     <StyledLoginForm onSubmit={handleLogin}>
@@ -75,7 +27,7 @@ export default function LoginForm() {
           type="text"
           id="user"
           placeholder="Usuário"
-          value={currentUser.user}
+          value={user}
           onChange={handleChange}
           required
         />
@@ -86,13 +38,13 @@ export default function LoginForm() {
           type="password"
           id="password"
           placeholder="Senha"
-          value={currentUser.password}
+          value={password}
           onChange={handleChange}
           required
         />
       </InputFieldDiv>
 
-      <ErrorMsg loginError={loginError}>{errorMsg}</ErrorMsg>
+      <ErrorMsg loginError={loginError}>{loginErrorMsg}</ErrorMsg>
       <Button>Login</Button>
     </StyledLoginForm>
   )

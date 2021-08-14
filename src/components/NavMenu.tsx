@@ -13,7 +13,7 @@ export default function NavMenu() {
   const [usersData, setUsersData] = useState<UserData[]>([])
   let currentRoute = router.pathname
 
-  function decrypt(word: string, key: string) {
+  function decrypt(word: string, key: any) {
     let decData = CryptoJS.enc.Base64.parse(word).toString(CryptoJS.enc.Utf8)
     let bytes = CryptoJS.AES.decrypt(decData, key).toString(CryptoJS.enc.Utf8)
     return JSON.parse(bytes)

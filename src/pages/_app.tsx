@@ -1,5 +1,6 @@
-import { createGlobalStyle } from "styled-components";
 import type { AppProps } from 'next/app'
+import { UserContextProvider } from "src/contexts/UserContext"
+import { createGlobalStyle } from "styled-components"
 
 const GlobalStyle = createGlobalStyle`
 * {
@@ -24,8 +25,10 @@ input[type=number] {
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
-      <GlobalStyle />
-      <Component {...pageProps} />
+      <UserContextProvider>
+        <GlobalStyle />
+        <Component {...pageProps} />
+      </UserContextProvider>
     </>
   )
 }
