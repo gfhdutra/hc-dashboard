@@ -1,61 +1,26 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 import Link from 'next/link'
-import CryptoJS from 'crypto-js'
-import axios from 'axios'
-import { Route, UserData } from 'src/interfaces'
+import { useNavMenu } from 'src/contexts/UserContext'
+import { Route } from 'src/interfaces'
 import styled from 'styled-components'
 
 
 export default function NavMenu() {
-  const router = useRouter()
-  const [userName, setUserName] = useState('')
-  const [usersData, setUsersData] = useState<UserData[]>([])
-  let currentRoute = router.pathname
-
-  function decrypt(word: string, key: any) {
-    let decData = CryptoJS.enc.Base64.parse(word).toString(CryptoJS.enc.Utf8)
-    let bytes = CryptoJS.AES.decrypt(decData, key).toString(CryptoJS.enc.Utf8)
-    return JSON.parse(bytes)
-  }
-
-  useEffect(() => {
-    axios.get('/api/getUsers')
-      .then(response => {
-        let apiRes = response.data.encryptext
-        let decryptedData = decrypt(apiRes, process.env.DECRYPT_KEY)
-        setUsersData(decryptedData)
-      })
-      .catch(error => {
-        console.log(error)
-      })
-  }, [])
+  const {
+    setUserName,
+    currentRoute,
+    handleLogout,
+  } = useNavMenu()
 
   useEffect(() => {
     let currentUser: any = localStorage.getItem('currentUser')
-    if (currentUser === 'null') {
-      router.push('/')
+    if (!currentUser) {
+      setUserName('')
     }
-    else if (currentUser !== null || currentUser !== 'null') {
+    else {
       setUserName(currentUser)
     }
-  }, [router])
-
-
-  function handleLogout() {
-    usersData.map((users: UserData) => {
-      if (userName == users.user) {
-        axios.patch('/api/updateUsers', { id: users.id, active: false })
-          .then(() => {
-            localStorage.setItem('currentUser', 'null')
-            router.push('/')
-          })
-          .catch(error => {
-            console.log('Error happened: ', error.message)
-          })
-      }
-    })
-  }
+  }, [setUserName])
 
   return (
     <MenuWrapper>

@@ -17,6 +17,8 @@ interface UserContextData {
   signUpErrorMsg: string,
   usersData: UserData[],
   currentUser: UserData,
+  userName: string,
+  currentRoute: string,
   Toast: typeof Swal,
   decrypt: (word: string, key: string) => any,
   verifyLogin: () => void,
@@ -24,7 +26,11 @@ interface UserContextData {
   handleLogin: (e: FormEvent) => void,
   verifySignUp: () => boolean,
   handleSignUp: (e: FormEvent) => void,
+  handleLogout: () => void,
   setCurrentUser: any,
+  setUserName: any,
+  setLoginError: any,
+  setSignUpError: any,
 }
 
 type UserContextProviderProps = {
@@ -35,30 +41,16 @@ export const UserContext = createContext({} as UserContextData)
 
 export function UserContextProvider({ children }: UserContextProviderProps) {
   const router = useRouter()
+  const [usersData, setUsersData] = useState<UserData[]>([])
   const userInitialState = { id: '', user: '', email: '', password: '', active: false }
   const [currentUser, setCurrentUser] = useState<UserData>(userInitialState)
-  const [usersData, setUsersData] = useState<UserData[]>([])
+  const [userName, setUserName] = useState('')
   const [loginError, setLoginError] = useState(false)
   const [loginErrorMsg, setLoginErrorMsg] = useState('Ocorreu um erro')
-  const [signUpError, setSignUpError] = useState(false)
   const [alertMsg, setAlertMsg] = useState(false)
+  const [signUpError, setSignUpError] = useState(false)
   const [signUpErrorMsg, setSignUpErrorMsg] = useState('Ocorreu um erro')
-
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 2000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      setAlertMsg(false)
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    },
-    willClose: () => {
-      router.push('/')
-    }
-  })
+  let currentRoute = router.pathname
 
   const decrypt = useCallback((word: string, key: any) => {
     let decData = CryptoJS.enc.Base64.parse(word).toString(CryptoJS.enc.Utf8)
@@ -77,6 +69,22 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
         console.log(error)
       })
   }, [decrypt])
+
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      setAlertMsg(false)
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    },
+    willClose: () => {
+      router.push('/')
+    }
+  })
 
   const handleChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setCurrentUser(prevState => ({ ...prevState, [e.target.id]: e.target.value }))
@@ -146,6 +154,21 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     }
   }, [currentUser, verifySignUp])
 
+  const handleLogout = useCallback(() => {
+    usersData.map((users: UserData) => {
+      if (userName == users.user) {
+        axios.patch('/api/updateUsers', { id: users.id, active: false })
+          .then(() => {
+            localStorage.removeItem('currentUser')
+            router.push('/')
+          })
+          .catch(error => {
+            console.log('Error happened: ', error.message)
+          })
+      }
+    })
+  }, [router, userName, usersData])
+
 
   return (
     <UserContext.Provider
@@ -159,6 +182,8 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
         signUpErrorMsg,
         usersData,
         currentUser,
+        userName,
+        currentRoute,
         Toast,
         decrypt,
         verifyLogin,
@@ -166,7 +191,11 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
         handleLogin,
         verifySignUp,
         handleSignUp,
-        setCurrentUser
+        handleLogout,
+        setCurrentUser,
+        setUserName,
+        setLoginError,
+        setSignUpError
       }}>
       {children}
     </UserContext.Provider>
@@ -178,6 +207,7 @@ export function useLoginForm() {
   const password = useContextSelector(UserContext, user => user.currentUser.password)
   const loginError = useContextSelector(UserContext, user => user.loginError)
   const loginErrorMsg = useContextSelector(UserContext, user => user.loginErrorMsg)
+  const setLoginError = useContextSelector(UserContext, user => user.setLoginError)
   const handleChange = useContextSelector(UserContext, user => user.handleChange)
   const handleLogin = useContextSelector(UserContext, user => user.handleLogin)
   const setCurrentUser = useContextSelector(UserContext, user => user.setCurrentUser)
@@ -187,6 +217,7 @@ export function useLoginForm() {
     password,
     loginError,
     loginErrorMsg,
+    setLoginError,
     handleChange,
     handleLogin,
     setCurrentUser
@@ -199,6 +230,7 @@ export function useSignUpForm() {
   const password = useContextSelector(UserContext, user => user.currentUser.password)
   const signUpError = useContextSelector(UserContext, user => user.signUpError)
   const signUpErrorMsg = useContextSelector(UserContext, user => user.signUpErrorMsg)
+  const setSignUpError = useContextSelector(UserContext, user => user.setSignUpError)
   const handleChange = useContextSelector(UserContext, user => user.handleChange)
   const handleSignUp = useContextSelector(UserContext, user => user.handleSignUp)
   const alertMsg = useContextSelector(UserContext, user => user.alertMsg)
@@ -211,10 +243,31 @@ export function useSignUpForm() {
     password,
     signUpError,
     signUpErrorMsg,
+    setSignUpError,
     handleChange,
     handleSignUp,
     alertMsg,
     Toast,
     setCurrentUser
+  }
+}
+
+export function useNavMenu() {
+  const setUserName = useContextSelector(UserContext, user => user.setUserName)
+  const currentRoute = useContextSelector(UserContext, user => user.currentRoute)
+  const handleLogout = useContextSelector(UserContext, user => user.handleLogout)
+
+  return {
+    setUserName,
+    currentRoute,
+    handleLogout,
+  }
+}
+
+export function useDashboard() {
+  const userName = useContextSelector(UserContext, user => user.userName)
+
+  return {
+    userName
   }
 }

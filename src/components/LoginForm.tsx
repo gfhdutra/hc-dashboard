@@ -1,7 +1,7 @@
-import { LoginError } from 'src/interfaces'
-import { useLoginForm } from "src/contexts/UserContext"
-import styled from "styled-components"
 import { useEffect } from 'react'
+import { useLoginForm } from "src/contexts/UserContext"
+import { LoginError } from 'src/interfaces'
+import styled from "styled-components"
 
 
 export default function LoginForm() {
@@ -10,6 +10,7 @@ export default function LoginForm() {
     password,
     loginError,
     loginErrorMsg,
+    setLoginError,
     handleChange,
     handleLogin,
     setCurrentUser
@@ -17,7 +18,8 @@ export default function LoginForm() {
 
   useEffect(() => {
     setCurrentUser({ id: '', user: '', email: '', password: '', active: false })
-  },[setCurrentUser])
+    setLoginError(false)
+  },[setCurrentUser, setLoginError])
 
   return (
     <StyledLoginForm onSubmit={handleLogin}>

@@ -17,7 +17,7 @@ export default function Cadastro() {
         <SignUpForm />
 
         <Link href="/" passHref>
-          <LinkAnchor>home</LinkAnchor>
+          <LinkAnchor>login</LinkAnchor>
         </Link>
       </Main>
     </Container>

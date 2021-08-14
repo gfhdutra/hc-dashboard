@@ -47,12 +47,12 @@ export default function ClientTable() {
   )
 }
 
+
 const Div = styled.div`
   width: 90%;
   margin: 2rem 0;
   overflow-x: auto;
 `
-
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -92,40 +92,6 @@ const Table = styled.table`
     overflow: hidden;
   }
 `
-
-
-
-
-// const Table = styled.table`
-//   width: 100%;
-//   border-collapse: collapse;
-
-//   thead {
-//     background-color: #363740;
-//     color: #fff;
-//   }
-//   td, th {
-//     text-align: center;
-//     padding: 0.5rem;
-//   }
-//   tbody tr {
-//     height: 50px;
-//   }
-//   tbody tr:nth-child(odd) {
-//     background-color: #e7e7e7;
-//   }
-//   tbody td:first-child {
-//     min-width: 50px;
-//   }
-//   tbody td:not(:first-child) {
-//     min-width: 160px;
-//     max-width: 200px;
-//     /* white-space: nowrap; */
-//     text-overflow: ellipsis;
-//     word-break: break-all;
-//     overflow: hidden;
-//   }
-// `
 const Actions = styled.div`
   display: flex;
   justify-content: center;

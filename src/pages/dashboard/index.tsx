@@ -1,29 +1,11 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
 import Head from 'next/head'
 import NavMenu from '../../components/NavMenu'
 import styled from 'styled-components'
-import RedirectUser from 'src/components/RedirectUser'
+import { useDashboard } from 'src/contexts/UserContext'
 
 
 export default function Dashboard() {
-  const router = useRouter()
-  const [userName, setUserName] = useState('')
-  const [validUser, setValidUser] = useState(false)
-
-  useEffect(() => {
-    let currentUser: any = localStorage.getItem('currentUser')
-    if (currentUser === 'null') {
-      router.push('/')
-    }
-    else if (currentUser !== null || currentUser !== 'null') {
-      setUserName(currentUser)
-    }
-  }, [router])
-
-  // if (!validUser) {
-  //   return <RedirectUser/>
-  // }
+  const { userName } = useDashboard()
 
   return (
     <Container>
