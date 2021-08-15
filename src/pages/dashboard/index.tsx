@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import NavMenu from '../../components/NavMenu'
-import styled from 'styled-components'
 import { useDashboard } from 'src/contexts/UserContext'
+import styled from 'styled-components'
 
 
 export default function Dashboard() {

@@ -38,7 +38,6 @@ type UserContextProviderProps = {
 }
 
 export const UserContext = createContext({} as UserContextData)
-
 export function UserContextProvider({ children }: UserContextProviderProps) {
   const router = useRouter()
   const [usersData, setUsersData] = useState<UserData[]>([])
@@ -106,9 +105,6 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
       }
       else if (currentUser.user == users.user && currentUser.password != users.password) {
         setLoginErrorMsg('Senha incorreta')
-      }
-      else if (currentUser.user != users.user && currentUser.password == users.password) {
-        setLoginErrorMsg('Usuário incorreto')
       }
     })
   }, [currentUser.password, currentUser.user, router, usersData])

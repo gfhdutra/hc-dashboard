@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Link from "next/link"
-import styled from 'styled-components'
 import LoginForm from '../components/LoginForm'
+import styled from 'styled-components'
 
 
 export default function Home() {
@@ -25,6 +25,7 @@ export default function Home() {
     </Container>
   )
 }
+
 
 const Container = styled.div`
   min-height: 100vh;
