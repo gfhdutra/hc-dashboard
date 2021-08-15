@@ -24,7 +24,7 @@ export default function SignUpForm() {
     getUsersData()
     setCurrentUser({id: '', user: '', email: '', password: '', active: false })
     setSignUpError(false)
-  }, [getUsersData, setCurrentUser, setSignUpError])
+  }, [])
 
   if (alertMsg) {
     Toast.fire({

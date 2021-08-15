@@ -14,7 +14,7 @@ export default function Dashboard() {
       </Head>
       <NavMenu />
       <Main>
-        <Title>Olá, {userName}</Title>
+        <Title>Olá, {userName.current}</Title>
         <Desciption>Este é o seu dashboard</Desciption>
       </Main>
     </Container>

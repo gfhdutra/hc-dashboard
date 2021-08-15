@@ -1,4 +1,4 @@
-import { useState, ReactNode, FormEvent, useEffect, useCallback, ChangeEvent } from 'react'
+import { useState, useRef, ReactNode, FormEvent, useCallback, ChangeEvent } from 'react'
 import { NextRouter, useRouter } from 'next/router'
 import { createContext, useContextSelector } from 'use-context-selector'
 import CryptoJS from 'crypto-js'
@@ -17,7 +17,7 @@ interface UserContextData {
   signUpErrorMsg: string,
   usersData: UserData[],
   currentUser: UserData,
-  userName: string,
+  userName: any,
   currentRoute: string,
   Toast: typeof Swal,
   encrypt: (word: any, key: any) => string,
@@ -29,9 +29,9 @@ interface UserContextData {
   handleSignUp: (e: FormEvent) => void,
   handleLogout: () => void,
   getUsersData: () => void,
+  getUserName: () => void,
   setUsersData: any,
   setCurrentUser: any,
-  setUserName: any,
   setLoginError: any,
   setSignUpError: any,
 }
@@ -46,7 +46,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   const [usersData, setUsersData] = useState<UserData[]>([])
   const userInitialState = { id: '', user: '', email: '', password: '', active: false }
   const [currentUser, setCurrentUser] = useState<UserData>(userInitialState)
-  const [userName, setUserName] = useState('')
+  const userName = useRef<any>(null)
   const [loginError, setLoginError] = useState(false)
   const [loginErrorMsg, setLoginErrorMsg] = useState('Ocorreu um erro')
   const [alertMsg, setAlertMsg] = useState(false)
@@ -78,6 +78,13 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
       })
   }, [decrypt])
 
+  const getUserName = useCallback(() => {
+    let userNow = localStorage.getItem('currentUser')
+    if (userNow) {
+      userName.current = decrypt(JSON.parse(userNow), process.env.DECRYPT_KEY)
+    }
+  }, [decrypt])
+
   const Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -104,10 +111,10 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
         setLoginError(false)
         axios.patch('/api/updateUsers', { id: users.id, active: true })
           .then(() => {
-            let current = encrypt(users, process.env.DECRYPT_KEY)
-            // localStorage.setItem('currentUser', JSON.stringify(current))
+            let current = encrypt(users.user, process.env.DECRYPT_KEY)
+            localStorage.setItem('currentUser', JSON.stringify(current))
             setCurrentUser({ id: '', user: '', email: '', password: '', active: true })
-            setUserName(users.user)
+            userName.current = users.user
             router.push('/dashboard')
           })
           .catch(error => {
@@ -152,7 +159,9 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     if (existingUser != true) {
       axios.post('/api/setUsers', currentUser)
         .then(() => {
-          setUserName(currentUser.user)
+          let current = encrypt(currentUser.user, process.env.DECRYPT_KEY)
+          localStorage.setItem('currentUser', JSON.stringify(current))
+          userName.current = currentUser.user
           setAlertMsg(true)
           setCurrentUser({ id: '', user: '', email: '', password: '', active: false })
         })
@@ -160,13 +169,14 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
           console.log('Error happened: ', error.message)
         })
     }
-  }, [currentUser, verifySignUp])
+  }, [currentUser, encrypt, verifySignUp])
 
   const handleLogout = useCallback(() => {
     usersData.map((users: UserData) => {
-      if (userName == users.user) {
+      if (userName.current == users.user) {
         axios.patch('/api/updateUsers', { id: users.id, active: false })
           .then(() => {
+            userName.current = null
             router.push('/')
           })
           .catch(error => {
@@ -175,7 +185,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
       }
     })
     localStorage.removeItem('currentUser')
-  }, [router, userName, usersData])
+  }, [router, usersData])
 
 
   return (
@@ -202,9 +212,9 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
         handleSignUp,
         handleLogout,
         getUsersData,
+        getUserName,
         setUsersData,
         setCurrentUser,
-        setUserName,
         setLoginError,
         setSignUpError,
       }}>
@@ -225,7 +235,7 @@ export function useLoginForm() {
   const setCurrentUser = useContextSelector(UserContext, user => user.setCurrentUser)
   const getUsersData = useContextSelector(UserContext, user => user.getUsersData)
   const router = useContextSelector(UserContext, user => user.router)
-
+  const getUserName = useContextSelector(UserContext, user => user.getUserName)
 
   return {
     user,
@@ -238,6 +248,7 @@ export function useLoginForm() {
     handleLogin,
     setCurrentUser,
     getUsersData,
+    getUserName,
     router
   }
 }

@@ -1,4 +1,3 @@
-import router from 'next/router'
 import { useEffect } from 'react'
 import { useLoginForm } from "src/contexts/UserContext"
 import { LoginError } from 'src/interfaces'
@@ -17,18 +16,19 @@ export default function LoginForm() {
     handleLogin,
     setCurrentUser,
     getUsersData,
+    getUserName,
     router
   } = useLoginForm()
 
   useEffect(() => {
     getUsersData()
-    if (userName != '') {
-      console.log(userName)
-      // router.replace('/dashboard')
+    getUserName()
+    if (userName.current !== null) {
+      router.replace('/dashboard')
     }
     setCurrentUser({ id: '', user: '', email: '', password: '', active: false })
     setLoginError(false)
-  }, [getUsersData, router, setCurrentUser, setLoginError, userName])
+  }, [])
 
 
   return (

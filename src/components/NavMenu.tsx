@@ -16,10 +16,10 @@ export default function NavMenu() {
 
   useEffect(() => {
     getUsersData()
-    if (userName == '') {
+    if (userName.current === null) {
       router.replace('/')
     }
-  }, [getUsersData, router, userName])
+  }, [])
 
   return (
     <MenuWrapper>
