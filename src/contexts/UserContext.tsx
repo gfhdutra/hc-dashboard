@@ -216,6 +216,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
 export function useLoginForm() {
   const user = useContextSelector(UserContext, user => user.currentUser.user)
   const password = useContextSelector(UserContext, user => user.currentUser.password)
+  const userName = useContextSelector(UserContext, user => user.userName)
   const loginError = useContextSelector(UserContext, user => user.loginError)
   const loginErrorMsg = useContextSelector(UserContext, user => user.loginErrorMsg)
   const setLoginError = useContextSelector(UserContext, user => user.setLoginError)
@@ -223,9 +224,12 @@ export function useLoginForm() {
   const handleLogin = useContextSelector(UserContext, user => user.handleLogin)
   const setCurrentUser = useContextSelector(UserContext, user => user.setCurrentUser)
   const getUsersData = useContextSelector(UserContext, user => user.getUsersData)
+  const router = useContextSelector(UserContext, user => user.router)
+
 
   return {
     user,
+    userName,
     password,
     loginError,
     loginErrorMsg,
@@ -233,7 +237,8 @@ export function useLoginForm() {
     handleChange,
     handleLogin,
     setCurrentUser,
-    getUsersData
+    getUsersData,
+    router
   }
 }
 
@@ -287,6 +292,6 @@ export function useDashboard() {
   const userName = useContextSelector(UserContext, user => user.userName)
 
   return {
-    userName
+    userName,
   }
 }
