@@ -24,11 +24,9 @@ input[type=number] {
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <>
-      <UserContextProvider>
-        <GlobalStyle />
-        <Component {...pageProps} />
-      </UserContextProvider>
-    </>
+    <UserContextProvider>
+      <GlobalStyle />
+      <Component {...pageProps} />
+    </UserContextProvider>
   )
 }

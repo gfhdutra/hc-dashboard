@@ -38,6 +38,7 @@ const Main = styled.main`
   justify-content: center;
   align-items: center;
   text-align: center;
+  word-break: break-word;
   background-color: #f7f7f7;
 `
 const Title = styled.h1`

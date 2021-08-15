@@ -39,7 +39,7 @@ export default async function setUsers(req: NextApiRequest, res: NextApiResponse
       },
       active: {
         type: "checkbox",
-        checkbox: false
+        checkbox: true
       }
     }
   })

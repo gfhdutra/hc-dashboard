@@ -7,20 +7,19 @@ import styled from 'styled-components'
 
 export default function NavMenu() {
   const {
-    setUserName,
+    router,
+    userName,
     currentRoute,
     handleLogout,
+    getUsersData
   } = useNavMenu()
 
   useEffect(() => {
-    let currentUser: any = localStorage.getItem('currentUser')
-    if (!currentUser) {
-      setUserName('')
+    getUsersData()
+    if (userName == '') {
+      router.replace('/')
     }
-    else {
-      setUserName(currentUser)
-    }
-  }, [setUserName])
+  }, [getUsersData, router, userName])
 
   return (
     <MenuWrapper>

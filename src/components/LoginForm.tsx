@@ -13,13 +13,16 @@ export default function LoginForm() {
     setLoginError,
     handleChange,
     handleLogin,
-    setCurrentUser
+    setCurrentUser,
+    getUsersData
   } = useLoginForm()
 
   useEffect(() => {
+    getUsersData()
     setCurrentUser({ id: '', user: '', email: '', password: '', active: false })
     setLoginError(false)
-  },[setCurrentUser, setLoginError])
+  },[getUsersData, setCurrentUser, setLoginError])
+
 
   return (
     <StyledLoginForm onSubmit={handleLogin}>

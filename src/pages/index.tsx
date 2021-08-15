@@ -1,10 +1,13 @@
 import Head from 'next/head'
-import Link from "next/link"
 import LoginForm from '../components/LoginForm'
 import styled from 'styled-components'
+import SignUpForm from 'src/components/SignUpForm'
+import { useState } from 'react'
 
 
 export default function Home() {
+  const [registred, setRegistred] = useState(true)
+
   return (
     <Container>
       <Head>
@@ -12,15 +15,20 @@ export default function Home() {
       </Head>
       <Main>
         <Title>HC Dashboard</Title>
-        <Description>Faça seu login</Description>
-
-        <LoginForm />
-
-        <CadastroText>não tem cadastro?
-          <Link href="/cadastro" passHref>
-            <LinkAnchor>cadastre-se</LinkAnchor>
-          </Link>
-        </CadastroText>
+        <Description>Faça seu login ou cadastre-se</Description>
+        {registred ?
+          <>
+            <LoginForm />
+            <CadastroText>não tem cadastro?</CadastroText>
+            <CadastroButton onClick={() => { setRegistred(false) }}>cadastre-se</CadastroButton>
+          </>
+          :
+          <>
+            <SignUpForm />
+            <CadastroText>já tem cadastro?</CadastroText>
+            <CadastroButton onClick={() => { setRegistred(true) }}>faça o login</CadastroButton>
+          </>
+        }
       </Main>
     </Container>
   )
@@ -59,7 +67,11 @@ const Description = styled.p`
 const CadastroText = styled.p`
   font-size: 1rem;
 `
-const LinkAnchor = styled.a`
+const CadastroButton = styled.a`
   color: inherit;
   padding: 0 0.2rem;
+  text-decoration: underline;
+  &:hover {
+    cursor: pointer;
+  }
 `

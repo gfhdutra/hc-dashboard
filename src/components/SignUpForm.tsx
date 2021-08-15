@@ -16,13 +16,15 @@ export default function SignUpForm() {
     handleSignUp,
     alertMsg,
     Toast,
-    setCurrentUser
+    setCurrentUser,
+    getUsersData
   } = useSignUpForm()
 
   useEffect(() => {
+    getUsersData()
     setCurrentUser({id: '', user: '', email: '', password: '', active: false })
     setSignUpError(false)
-  }, [setCurrentUser, setSignUpError])
+  }, [getUsersData, setCurrentUser, setSignUpError])
 
   if (alertMsg) {
     Toast.fire({
