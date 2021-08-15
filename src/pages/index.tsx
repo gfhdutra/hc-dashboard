@@ -2,11 +2,20 @@ import Head from 'next/head'
 import LoginForm from '../components/LoginForm'
 import styled from 'styled-components'
 import SignUpForm from 'src/components/SignUpForm'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useHomeIndex } from 'src/contexts/UserContext'
 
 
 export default function Home() {
   const [registred, setRegistred] = useState(true)
+  const { router, userName, getUserName } = useHomeIndex()
+
+  useEffect(() => {
+    getUserName()
+    if (userName.current !== null) {
+      router.replace('/dashboard')
+    }
+  }, [])
 
   return (
     <Container>

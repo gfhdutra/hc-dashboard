@@ -7,7 +7,6 @@ import styled from "styled-components"
 export default function LoginForm() {
   const {
     user,
-    userName,
     password,
     loginError,
     loginErrorMsg,
@@ -15,17 +14,11 @@ export default function LoginForm() {
     handleChange,
     handleLogin,
     setCurrentUser,
-    getUsersData,
-    getUserName,
-    router
+    getUsersData
   } = useLoginForm()
 
   useEffect(() => {
     getUsersData()
-    getUserName()
-    if (userName.current !== null) {
-      router.replace('/dashboard')
-    }
     setCurrentUser({ id: '', user: '', email: '', password: '', active: false })
     setLoginError(false)
   }, [])

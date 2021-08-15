@@ -2,10 +2,19 @@ import Head from 'next/head'
 import NavMenu from '../../components/NavMenu'
 import { useDashboard } from 'src/contexts/UserContext'
 import styled from 'styled-components'
+import { useEffect, useRef } from 'react'
+import { useState } from 'react'
 
 
 export default function Dashboard() {
-  const { userName } = useDashboard()
+  const { userName, getUserName } = useDashboard()
+  const [displayName, setDisplayName] = useState(userName.current)
+  let displayUser = useRef(userName.current)
+
+  useEffect(() => {
+    displayUser.current = getUserName()
+    setDisplayName(displayUser.current)
+  }, [])
 
   return (
     <Container>
@@ -14,7 +23,7 @@ export default function Dashboard() {
       </Head>
       <NavMenu />
       <Main>
-        <Title>Olá, {userName.current}</Title>
+        <Title>Olá, {displayName}</Title>
         <Desciption>Este é o seu dashboard</Desciption>
       </Main>
     </Container>

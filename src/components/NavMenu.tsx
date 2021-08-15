@@ -11,13 +11,15 @@ export default function NavMenu() {
     userName,
     currentRoute,
     handleLogout,
-    getUsersData
+    getUsersData,
+    getUserName
   } = useNavMenu()
 
   useEffect(() => {
     getUsersData()
+    getUserName()
     if (userName.current === null) {
-      router.replace('/')
+        router.replace('/')
     }
   }, [])
 

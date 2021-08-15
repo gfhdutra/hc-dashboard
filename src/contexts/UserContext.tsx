@@ -29,7 +29,7 @@ interface UserContextData {
   handleSignUp: (e: FormEvent) => void,
   handleLogout: () => void,
   getUsersData: () => void,
-  getUserName: () => void,
+  getUserName: () => any,
   setUsersData: any,
   setCurrentUser: any,
   setLoginError: any,
@@ -83,6 +83,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     if (userNow) {
       userName.current = decrypt(JSON.parse(userNow), process.env.DECRYPT_KEY)
     }
+    return userName.current
   }, [decrypt])
 
   const Toast = Swal.mixin({
@@ -108,18 +109,22 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   const verifyLogin = useCallback(() => {
     usersData.map((users: UserData) => {
       if (currentUser.user == users.user && currentUser.password == users.password) {
-        setLoginError(false)
-        axios.patch('/api/updateUsers', { id: users.id, active: true })
-          .then(() => {
-            let current = encrypt(users.user, process.env.DECRYPT_KEY)
-            localStorage.setItem('currentUser', JSON.stringify(current))
-            setCurrentUser({ id: '', user: '', email: '', password: '', active: true })
-            userName.current = users.user
-            router.push('/dashboard')
-          })
-          .catch(error => {
-            console.log('Error happened: ', error.message)
-          })
+        if (users.active == true) {
+          setLoginErrorMsg('Usuário já está logado')
+        } else {
+          setLoginError(false)
+          axios.patch('/api/updateUsers', { id: users.id, active: true })
+            .then(() => {
+              let current = encrypt(users.user, process.env.DECRYPT_KEY)
+              localStorage.setItem('currentUser', JSON.stringify(current))
+              setCurrentUser({ id: '', user: '', email: '', password: '', active: true })
+              userName.current = users.user
+              router.push('/dashboard')
+            })
+            .catch(error => {
+              console.log('Error happened: ', error.message)
+            })
+        }
       }
       else if (currentUser.user == users.user && currentUser.password != users.password) {
         setLoginErrorMsg('Senha incorreta')
@@ -226,7 +231,6 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
 export function useLoginForm() {
   const user = useContextSelector(UserContext, user => user.currentUser.user)
   const password = useContextSelector(UserContext, user => user.currentUser.password)
-  const userName = useContextSelector(UserContext, user => user.userName)
   const loginError = useContextSelector(UserContext, user => user.loginError)
   const loginErrorMsg = useContextSelector(UserContext, user => user.loginErrorMsg)
   const setLoginError = useContextSelector(UserContext, user => user.setLoginError)
@@ -234,12 +238,9 @@ export function useLoginForm() {
   const handleLogin = useContextSelector(UserContext, user => user.handleLogin)
   const setCurrentUser = useContextSelector(UserContext, user => user.setCurrentUser)
   const getUsersData = useContextSelector(UserContext, user => user.getUsersData)
-  const router = useContextSelector(UserContext, user => user.router)
-  const getUserName = useContextSelector(UserContext, user => user.getUserName)
 
   return {
     user,
-    userName,
     password,
     loginError,
     loginErrorMsg,
@@ -248,8 +249,6 @@ export function useLoginForm() {
     handleLogin,
     setCurrentUser,
     getUsersData,
-    getUserName,
-    router
   }
 }
 
@@ -289,20 +288,36 @@ export function useNavMenu() {
   const currentRoute = useContextSelector(UserContext, user => user.currentRoute)
   const handleLogout = useContextSelector(UserContext, user => user.handleLogout)
   const getUsersData = useContextSelector(UserContext, user => user.getUsersData)
+  const getUserName = useContextSelector(UserContext, user => user.getUserName)
 
   return {
     router,
     userName,
     currentRoute,
     handleLogout,
-    getUsersData
+    getUsersData,
+    getUserName
   }
 }
 
 export function useDashboard() {
   const userName = useContextSelector(UserContext, user => user.userName)
+  const getUserName = useContextSelector(UserContext, user => user.getUserName)
 
   return {
     userName,
+    getUserName
+  }
+}
+
+export function useHomeIndex() {
+  const router = useContextSelector(UserContext, user => user.router)
+  const userName = useContextSelector(UserContext, user => user.userName)
+  const getUserName = useContextSelector(UserContext, user => user.getUserName)
+
+  return {
+    router,
+    userName,
+    getUserName
   }
 }
