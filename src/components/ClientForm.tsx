@@ -1,6 +1,6 @@
 import { ChangeEvent } from 'react'
 import { default as NumberFormat } from 'react-number-format';
-import { useClientForm } from "src/contexts/ClientContext"
+import { useClientForm } from "src/contexts/UserContext"
 import { NewClientError } from 'src/interfaces'
 import styled from "styled-components"
 

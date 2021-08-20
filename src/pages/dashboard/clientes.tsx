@@ -1,4 +1,3 @@
-import { ClientContextProvider } from '../../contexts/ClientContext'
 import Head from 'next/head'
 import styled from 'styled-components'
 import NavMenu from '../../components/NavMenu'
@@ -7,22 +6,19 @@ import ClientTable from 'src/components/ClientTable'
 
 
 export default function Clientes() {
-
   return (
-    <ClientContextProvider>
-      <Container>
-        <Head>
-          <title>User Dashboard - Clientes</title>
-        </Head>
-        <NavMenu />
-        <Main>
-          <Title>Clientes</Title>
-          <Desciption>Gerencie aqui seus clientes</Desciption>
-          <ClientForm />
-          <ClientTable />
-        </Main>
-      </Container>
-    </ClientContextProvider>
+    <Container>
+      <Head>
+        <title>User Dashboard - Clientes</title>
+      </Head>
+      <NavMenu />
+      <Main>
+        <Title>Clientes</Title>
+        <Desciption>Gerencie aqui seus clientes</Desciption>
+        <ClientForm />
+        <ClientTable />
+      </Main>
+    </Container>
   )
 }
 

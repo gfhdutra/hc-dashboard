@@ -1,9 +1,9 @@
-import { useState, useRef, ReactNode, FormEvent, useCallback, ChangeEvent } from 'react'
+import { useState, useRef, ReactNode, FormEvent, useCallback, ChangeEvent, useMemo, useEffect } from 'react'
 import { NextRouter, useRouter } from 'next/router'
 import { createContext, useContextSelector } from 'use-context-selector'
 import CryptoJS from 'crypto-js'
 import axios from 'axios'
-import { UserData } from 'src/interfaces'
+import { ClientData, UserData } from 'src/interfaces'
 import Swal from 'sweetalert2'
 
 
@@ -19,7 +19,13 @@ interface UserContextData {
   currentUser: UserData,
   userName: any,
   currentRoute: string,
+  registred: boolean,
   Toast: typeof Swal,
+  setUsersData: any,
+  setCurrentUser: any,
+  setLoginError: any,
+  setSignUpError: any,
+  setRegistred: any,
   encrypt: (word: any, key: any) => string,
   decrypt: (word: string, key: string) => any,
   verifyLogin: () => void,
@@ -30,10 +36,43 @@ interface UserContextData {
   handleLogout: () => void,
   getUsersData: () => void,
   getUserName: () => any,
-  setUsersData: any,
-  setCurrentUser: any,
-  setLoginError: any,
-  setSignUpError: any,
+  clientsDataList: ClientData[],
+  clientsDataList2: any,
+  id: number,
+  currentId: number,
+  name: string,
+  cpf: string,
+  email: string,
+  phone: string,
+  adress: string,
+  newClientError: boolean,
+  updateClient: boolean,
+  updateTable: boolean,
+  msgErro: string,
+  setClientsDataList: any;
+  setId: any;
+  setCurrentId: any,
+  setName: any;
+  setCpf: any;
+  setEmail: any;
+  setPhone: any;
+  setAdress: any;
+  setNewClientError: any;
+  setUpdateClient: any;
+  setUpdateTable: any;
+  setMsgErro: any;
+  currentClient: ClientData,
+  clientDatabaseID: any,
+  sortClientsList: (a: ClientData, b: ClientData) => number,
+  createClient: (currentClient: ClientData) => ClientData
+  clearForm: () => void,
+  setClientId: (newId: number) => void,
+  editClientForm: (id: number) => void,
+  deleteConfirmation: (id: number) => void,
+  removeClient: (id: number) => void,
+  handleModifyClientsList: (e: FormEvent) => void,
+  getClientDatabaseID: () => void,
+  getClientsList: () => void,
 }
 
 type UserContextProviderProps = {
@@ -44,7 +83,7 @@ export const UserContext = createContext({} as UserContextData)
 export function UserContextProvider({ children }: UserContextProviderProps) {
   const router = useRouter()
   const [usersData, setUsersData] = useState<UserData[]>([])
-  const userInitialState = { id: '', user: '', email: '', password: '', active: false }
+  const userInitialState = { id: '', user: '', email: '', password: '', active: false, clientDB: '' }
   const [currentUser, setCurrentUser] = useState<UserData>(userInitialState)
   const userName = useRef<any>(null)
   const [loginError, setLoginError] = useState(false)
@@ -53,6 +92,27 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   const [signUpError, setSignUpError] = useState(false)
   const [signUpErrorMsg, setSignUpErrorMsg] = useState('Ocorreu um erro')
   let currentRoute = router.pathname
+
+  // CLIENT CONTEXT
+  const [clientsDataList, setClientsDataList] = useState<ClientData[]>([])
+  const clientsDataList2 = useRef<ClientData[]>(clientsDataList)
+  const [id, setId] = useState(Date.now())
+  const [currentId, setCurrentId] = useState(Number)
+  const [name, setName] = useState('')
+  const [cpf, setCpf] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [adress, setAdress] = useState('')
+  const clientDatabaseID = useRef<string>(null)
+  const [newClientError, setNewClientError] = useState(false)
+  const [updateClient, setUpdateClient] = useState(false)
+  const [updateTable, setUpdateTable] = useState(false)
+  const [msgErro, setMsgErro] = useState('Ocorreu um erro')
+  const [registred, setRegistred] = useState(true)
+  const currentClient: ClientData = useMemo(() => {
+    return { id, name, cpf, email, phone, adress }
+  }, [adress, cpf, email, id, name, phone])
+
 
   const encrypt = useCallback((word: any, key: any) => {
     let encJson = CryptoJS.AES.encrypt(JSON.stringify(word), key).toString()
@@ -81,9 +141,21 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   const getUserName = useCallback(() => {
     let userNow = localStorage.getItem('currentUser')
     if (userNow) {
-      userName.current = decrypt(JSON.parse(userNow), process.env.DECRYPT_KEY)
+      let currentUser = decrypt(JSON.parse(userNow), process.env.DECRYPT_KEY)
+      userName.current = currentUser.user
     }
     return userName.current
+  }, [decrypt])
+
+  const getClientDatabaseID = useCallback(() => {
+    let clientDB
+    let userNow = localStorage.getItem('currentUser')
+    if (userNow) {
+      let currentUser = decrypt(JSON.parse(userNow), process.env.DECRYPT_KEY)
+      clientDatabaseID.current = currentUser.clientDB
+      clientDB = currentUser.clientDB
+    }
+    return clientDB
   }, [decrypt])
 
   const Toast = Swal.mixin({
@@ -98,7 +170,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     },
     willClose: () => {
-      router.push('/dashboard')
+      setRegistred(true)
     }
   })
 
@@ -106,23 +178,48 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     setCurrentUser(prevState => ({ ...prevState, [e.target.id]: e.target.value }))
   }, [])
 
+  const getClientsList = useCallback(() => {
+    let clientDB = getClientDatabaseID()
+    if (clientDB != null) {
+      let body = { databaseID: clientDB }
+      axios.post('/api/getClients', body)
+        .then(response => {
+          setClientsDataList(response.data.clientsList)
+          localStorage.setItem('clientsDataList', JSON.stringify(response.data.clientsList))
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }
+  }, [getClientDatabaseID])
+
   const verifyLogin = useCallback(() => {
     usersData.map((users: UserData) => {
       if (currentUser.user == users.user && currentUser.password == users.password) {
         if (users.active == true) {
           setLoginErrorMsg('Usuário já está logado')
         } else {
+          clientDatabaseID.current = users.clientDB
           setLoginError(false)
           axios.patch('/api/updateUsers', { id: users.id, active: true })
             .then(() => {
-              let current = encrypt(users.user, process.env.DECRYPT_KEY)
+              let body = { databaseID: users.clientDB }
+              axios.post('/api/getClients', body)
+                .then(response => {
+                  setClientsDataList(response.data.clientsList)
+                  localStorage.setItem('clientsDataList', JSON.stringify(response.data.clientsList))
+                })
+                .catch(error => {
+                  console.log(error)
+                })
+              let current = encrypt(users, process.env.DECRYPT_KEY)
               localStorage.setItem('currentUser', JSON.stringify(current))
-              setCurrentUser({ id: '', user: '', email: '', password: '', active: true })
+              setCurrentUser({ id: '', user: '', email: '', password: '', active: true, clientDB: '' })
               userName.current = users.user
               router.push('/dashboard')
             })
             .catch(error => {
-              console.log('Error happened: ', error.message)
+              console.log(error)
             })
         }
       }
@@ -164,17 +261,14 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     if (existingUser != true) {
       axios.post('/api/setUsers', currentUser)
         .then(() => {
-          let current = encrypt(currentUser.user, process.env.DECRYPT_KEY)
-          localStorage.setItem('currentUser', JSON.stringify(current))
-          userName.current = currentUser.user
           setAlertMsg(true)
-          setCurrentUser({ id: '', user: '', email: '', password: '', active: false })
+          setCurrentUser({ id: '', user: '', email: '', password: '', active: false, clientDB: '' })
         })
         .catch(error => {
-          console.log('Error happened: ', error.message)
+          console.log(error)
         })
     }
-  }, [currentUser, encrypt, verifySignUp])
+  }, [currentUser, verifySignUp])
 
   const handleLogout = useCallback(() => {
     usersData.map((users: UserData) => {
@@ -190,7 +284,129 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
       }
     })
     localStorage.removeItem('currentUser')
+    localStorage.removeItem('clientsDataList')
   }, [router, usersData])
+
+
+
+
+  // CLIENT CONTEXT
+
+  useEffect(() => {
+    getClientsList()
+    const clientsDataListString = localStorage.getItem('clientsDataList')
+    if (clientsDataListString) {
+      setClientsDataList(JSON.parse(clientsDataListString))
+      if (!updateClient) {
+        setId(Date.now())
+      }
+      else if (updateClient) {
+        setId(currentId)
+      }
+    }
+  }, [clientsDataList.length, currentId, getClientsList, updateClient])
+
+
+  const sortClientsList = useCallback((a: ClientData, b: ClientData) => {
+    return a.id - b.id;
+  }, [])
+
+  const createClient = useCallback((currentClient: any): any => {
+    return {
+      id: (currentClient.id).toString(),
+      name: currentClient.name,
+      cpf: currentClient.cpf,
+      email: currentClient.email,
+      phone: currentClient.phone,
+      adress: currentClient.adress,
+      clientDB: clientDatabaseID.current,
+    }
+  }, [])
+
+  const clearForm = useCallback(() => {
+    setName('')
+    setCpf('')
+    setEmail('')
+    setPhone('')
+    setAdress('')
+  }, [])
+
+  const editClientForm = useCallback((id: number) => {
+    clientsDataList.map((client: ClientData) => {
+      if (id === client.id) {
+        setName(client.name)
+        setCpf(client.cpf)
+        setEmail(client.email)
+        setPhone(client.phone)
+        setAdress(client.adress)
+      }
+    })
+  }, [clientsDataList])
+
+  const setClientId = useCallback((newId: number) => {
+    setCurrentId(newId)
+    editClientForm(newId)
+    setUpdateClient(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [editClientForm])
+
+  const removeClient = useCallback((id: number) => {
+    clientsDataList.map((client: ClientData) => {
+      if (client.id === id) {
+        let index = clientsDataList.indexOf(client)
+        clientsDataList.splice(index, 1)
+        localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList))
+      }
+    })
+    setUpdateTable(!updateTable)
+    localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList.sort(sortClientsList)))
+  }, [clientsDataList, sortClientsList, updateTable])
+
+  const deleteConfirmation = useCallback((id: number) => {
+    Swal.fire({
+      title: 'Excluir cadastro?',
+      text: "Esta ação é irreversível!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#862bdb',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Excluir',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        removeClient(id)
+        Swal.fire(
+          'Excluído!',
+          'O cadastro foi excluído com sucesso.',
+          'success'
+        )
+      }
+    })
+  }, [removeClient])
+
+  const handleModifyClientsList = useCallback((e: FormEvent) => {
+    e.preventDefault()
+    setNewClientError(false)
+    setMsgErro('Ocorreu um erro')
+    if (updateClient) {
+      removeClient(id)
+    }
+    setId(Date.now())
+    let newClient = createClient(currentClient)
+    axios.post('/api/setNewClient', newClient)
+      .then(() => {
+        getClientsList()
+        const clientsDataListString = localStorage.getItem('clientsDataList')
+        setClientsDataList(JSON.parse(clientsDataListString))
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    clearForm()
+    setUpdateClient(false)
+    localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList.sort(sortClientsList)))
+  }, [clearForm, clientsDataList, createClient, currentClient, getClientsList, id, removeClient, sortClientsList, updateClient])
+
 
 
   return (
@@ -222,6 +438,45 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
         setCurrentUser,
         setLoginError,
         setSignUpError,
+        clientsDataList,
+        id,
+        currentId,
+        name,
+        cpf,
+        email,
+        phone,
+        adress,
+        newClientError,
+        updateClient,
+        updateTable,
+        msgErro,
+        setClientsDataList,
+        setId,
+        setCurrentId,
+        setName,
+        setCpf,
+        setEmail,
+        setPhone,
+        setAdress,
+        setNewClientError,
+        setUpdateClient,
+        setUpdateTable,
+        setMsgErro,
+        currentClient,
+        clientDatabaseID,
+        sortClientsList,
+        createClient,
+        clearForm,
+        setClientId,
+        editClientForm,
+        deleteConfirmation,
+        removeClient,
+        handleModifyClientsList,
+        getClientDatabaseID,
+        getClientsList,
+        clientsDataList2,
+        registred,
+        setRegistred
       }}>
       {children}
     </UserContext.Provider>
@@ -314,10 +569,60 @@ export function useHomeIndex() {
   const router = useContextSelector(UserContext, user => user.router)
   const userName = useContextSelector(UserContext, user => user.userName)
   const getUserName = useContextSelector(UserContext, user => user.getUserName)
+  const registred = useContextSelector(UserContext, user => user.registred)
+  const setRegistred = useContextSelector(UserContext, user => user.setRegistred)
 
   return {
     router,
     userName,
-    getUserName
+    getUserName,
+    registred,
+    setRegistred
+  }
+}
+
+export const useClientForm = () => {
+  const name = useContextSelector(UserContext, client => client.name)
+  const cpf = useContextSelector(UserContext, client => client.cpf)
+  const email = useContextSelector(UserContext, client => client.email)
+  const phone = useContextSelector(UserContext, client => client.phone)
+  const adress = useContextSelector(UserContext, client => client.adress)
+  const newClientError = useContextSelector(UserContext, client => client.newClientError)
+  const msgErro = useContextSelector(UserContext, client => client.msgErro)
+  const setName = useContextSelector(UserContext, client => client.setName)
+  const setCpf = useContextSelector(UserContext, client => client.setCpf)
+  const setEmail = useContextSelector(UserContext, client => client.setEmail)
+  const setPhone = useContextSelector(UserContext, client => client.setPhone)
+  const setAdress = useContextSelector(UserContext, client => client.setAdress)
+  const handleModifyClientsList = useContextSelector(UserContext, client => client.handleModifyClientsList)
+  const clearForm = useContextSelector(UserContext, client => client.clearForm)
+
+  return {
+    name,
+    cpf,
+    email,
+    phone,
+    adress,
+    newClientError,
+    msgErro,
+    setName,
+    setCpf,
+    setEmail,
+    setPhone,
+    setAdress,
+    handleModifyClientsList,
+    clearForm
+  }
+}
+
+export function useClientTable() {
+  const clientsDataList = useContextSelector(UserContext, client => client.clientsDataList)
+  const setClientId = useContextSelector(UserContext, client => client.setClientId)
+  const deleteConfirmation = useContextSelector(UserContext, client => client.deleteConfirmation)
+
+  return {
+    clientsDataList,
+    setClientId,
+    deleteConfirmation,
   }
 }

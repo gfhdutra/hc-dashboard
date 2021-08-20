@@ -22,7 +22,8 @@ export default async function getUsers(req: NextApiRequest, res: NextApiResponse
         let email = result.properties.email.email
         let password = result.properties.password.rich_text[0].plain_text
         let active = result.properties.active.checkbox
-        userList.push({ id, user, email, password, active })
+        let clientDB = result.properties.clientDB.rich_text[0].plain_text
+        userList.push({ id, user, email, password, active, clientDB })
       })
       let encryptext = encrypt(userList, process.env.DECRYPT_KEY)
       res.status(201).json({ encryptext })

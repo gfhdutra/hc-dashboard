@@ -5,7 +5,8 @@ export interface UserData {
   user: string,
   email: string,
   password: string,
-  active: boolean
+  active: boolean,
+  clientDB: string
 }
 export interface CurrentUser {
   user: string,
@@ -23,4 +24,12 @@ export interface NewClientError {
 export interface Route {
   route: string,
   currentRoute: string
+}
+export interface ClientData {
+  id: number,
+  name: string,
+  cpf: string,
+  email: string,
+  phone: string,
+  adress: string,
 }
