@@ -161,7 +161,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     toast: true,
     position: 'top-end',
     showConfirmButton: false,
-    timer: 2000,
+    timer: 1500,
     timerProgressBar: true,
     didOpen: (toast) => {
       setAlertMsg(false)
@@ -195,32 +195,28 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   const verifyLogin = useCallback(() => {
     usersData.map((users: UserData) => {
       if (currentUser.user == users.user && currentUser.password == users.password) {
-        if (users.active == true) {
-          setLoginErrorMsg('Usuário já está logado')
-        } else {
-          clientDatabaseID.current = users.clientDB
-          setLoginError(false)
-          axios.patch('/api/updateUsers', { id: users.id, active: true })
-            .then(() => {
-              let body = { databaseID: users.clientDB }
-              axios.post('/api/getClients', body)
-                .then(response => {
-                  setClientsDataList(response.data.clientsList)
-                  localStorage.setItem('clientsDataList', JSON.stringify(response.data.clientsList))
-                })
-                .catch(error => {
-                  console.log(error)
-                })
-              let current = encrypt(users, process.env.DECRYPT_KEY)
-              localStorage.setItem('currentUser', JSON.stringify(current))
-              setCurrentUser({ id: '', user: '', email: '', password: '', active: true, clientDB: '' })
-              userName.current = users.user
-              router.push('/dashboard')
-            })
-            .catch(error => {
-              console.log(error)
-            })
-        }
+        clientDatabaseID.current = users.clientDB
+        setLoginError(false)
+        axios.patch('/api/updateUsers', { id: users.id, active: true })
+          .then(() => {
+            let body = { databaseID: users.clientDB }
+            axios.post('/api/getClients', body)
+              .then(response => {
+                setClientsDataList(response.data.clientsList)
+                localStorage.setItem('clientsDataList', JSON.stringify(response.data.clientsList))
+              })
+              .catch(error => {
+                console.log(error)
+              })
+            let current = encrypt(users, process.env.DECRYPT_KEY)
+            localStorage.setItem('currentUser', JSON.stringify(current))
+            setCurrentUser({ id: '', user: '', email: '', password: '', active: true, clientDB: '' })
+            userName.current = users.user
+            router.push('/dashboard')
+          })
+          .catch(error => {
+            console.log(error)
+          })
       }
       else if (currentUser.user == users.user && currentUser.password != users.password) {
         setLoginErrorMsg('Senha incorreta')
@@ -258,10 +254,10 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     setSignUpErrorMsg('Ocorreu um erro')
     let existingUser = verifySignUp()
     if (existingUser != true) {
+      setCurrentUser({ id: '', user: '', email: '', password: '', active: false, clientDB: '' })
       axios.post('/api/setUsers', currentUser)
         .then(() => {
           setAlertMsg(true)
-          setCurrentUser({ id: '', user: '', email: '', password: '', active: false, clientDB: '' })
         })
         .catch(error => {
           console.log(error)
