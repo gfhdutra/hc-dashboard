@@ -67,12 +67,15 @@ export default async function setUsers(req: NextApiRequest, res: NextApiResponse
         adress: {
           rich_text: {}
         },
+        createdAt: {
+          created_time: {}
+        },
       }
     })
       .then(response => {
         newClientDatabaseId = response.id
         updateClientDB(newUserPageId, newClientDatabaseId)
-        res.status(201).json({ message: 'Sucesso!' })
+        // res.status(201).json({ message: 'Sucesso!' })
       })
       .catch(error => {
         console.log(error)
@@ -131,7 +134,7 @@ export default async function setUsers(req: NextApiRequest, res: NextApiResponse
     .then(response => {
       let newUserPageId = response.id
       createClientDatabase(newUserPageId)
-      res.status(201).json({ message: 'Sucesso!' })
+      // res.status(201).json({ message: 'Sucesso!' })
     })
     .catch(error => {
       console.log(error)

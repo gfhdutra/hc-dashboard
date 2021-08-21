@@ -7,7 +7,15 @@ const notion = new Client({ auth: process.env.NOTION_API_KEY })
 export default async function getClients(req: NextApiRequest, res: NextApiResponse) {
   const { databaseID } = req.body
 
-  await notion.databases.query({ database_id: databaseID })
+  await notion.databases.query({ 
+    database_id: databaseID, 
+    sorts: [
+      {
+        property: 'createdAt',
+        direction: 'ascending'
+      }
+    ]
+  })
     .then(response => {
       const clientsList: ClientData[] = []
       response.results.map((result: any) => {

@@ -63,7 +63,6 @@ interface UserContextData {
   setMsgErro: any;
   currentClient: ClientData,
   clientDatabaseID: any,
-  sortClientsList: (a: ClientData, b: ClientData) => number,
   createClient: (currentClient: ClientData) => ClientData
   clearForm: () => void,
   setClientId: (newId: number) => void,
@@ -306,11 +305,6 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     }
   }, [clientsDataList.length, currentId, getClientsList, updateClient])
 
-
-  const sortClientsList = useCallback((a: ClientData, b: ClientData) => {
-    return a.id - b.id;
-  }, [])
-
   const createClient = useCallback((currentClient: any): any => {
     return {
       id: (currentClient.id).toString(),
@@ -350,17 +344,41 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [editClientForm])
 
-  const removeClient = useCallback((id: number) => {
-    clientsDataList.map((client: ClientData) => {
-      if (client.id === id) {
-        let index = clientsDataList.indexOf(client)
-        clientsDataList.splice(index, 1)
-        localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList))
-      }
+  const updateClientField = useCallback((id: any) => {
+    axios.patch('/api/updateClient', {
+      id: id,
+      name: name,
+      cpf: cpf,
+      email: email,
+      phone: phone,
+      adress: adress,
+      archived: false,
     })
+      .then(() => {
+        getClientsList()
+        const clientsDataListString = localStorage.getItem('clientsDataList')
+        setClientsDataList(JSON.parse(clientsDataListString))
+        localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList))
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }, [adress, clientsDataList, cpf, email, getClientsList, name, phone])
+
+  const removeClient = useCallback((id: any) => {
+    axios.patch('/api/updateClient', { id: id, archived: true })
+      .then(() => {
+        getClientsList()
+        const clientsDataListString = localStorage.getItem('clientsDataList')
+        setClientsDataList(JSON.parse(clientsDataListString))
+        localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList))
+      })
+      .catch((error) => {
+        console.log(error)
+      })
     setUpdateTable(!updateTable)
-    localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList.sort(sortClientsList)))
-  }, [clientsDataList, sortClientsList, updateTable])
+    localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList))
+  }, [clientsDataList, getClientsList, updateTable])
 
   const deleteConfirmation = useCallback((id: number) => {
     Swal.fire({
@@ -389,23 +407,25 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     setNewClientError(false)
     setMsgErro('Ocorreu um erro')
     if (updateClient) {
-      removeClient(id)
+      updateClientField(id)
+      // removeClient(id)
+    } else if (!updateClient) {
+      setId(Date.now())
+      let newClient = createClient(currentClient)
+      axios.post('/api/setNewClient', newClient)
+        .then(() => {
+          getClientsList()
+          const clientsDataListString = localStorage.getItem('clientsDataList')
+          setClientsDataList(JSON.parse(clientsDataListString))
+          localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList))
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
-    setId(Date.now())
-    let newClient = createClient(currentClient)
-    axios.post('/api/setNewClient', newClient)
-      .then(() => {
-        getClientsList()
-        const clientsDataListString = localStorage.getItem('clientsDataList')
-        setClientsDataList(JSON.parse(clientsDataListString))
-      })
-      .catch((error) => {
-        console.log(error)
-      })
     clearForm()
     setUpdateClient(false)
-    localStorage.setItem('clientsDataList', JSON.stringify(clientsDataList.sort(sortClientsList)))
-  }, [clearForm, clientsDataList, createClient, currentClient, getClientsList, id, removeClient, sortClientsList, updateClient])
+  }, [clearForm, clientsDataList, createClient, currentClient, getClientsList, id, updateClient, updateClientField])
 
 
 
@@ -464,7 +484,6 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
         setMsgErro,
         currentClient,
         clientDatabaseID,
-        sortClientsList,
         createClient,
         clearForm,
         setClientId,
